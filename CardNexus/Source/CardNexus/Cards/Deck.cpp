@@ -38,10 +38,17 @@ void ADeck::InitBaseCardList()
 		for(int32 i = 0; i < m_MaxCardsPerDeck; ++i)
 		{
 			auto* card{world->SpawnActor<ACard>(m_CardActor, FVector{0, 0, 0}, FRotator::ZeroRotator, spawnParams)};
-			card->Initialize(names[j]);
+			card->Initialize(names[j], this);
 			m_DeckList.Add(card);
 		}
 	}
+	Shuffle();
+}
+
+void ADeck::ShuffleDiscardIntoDeck()
+{
+	m_DeckList = m_DiscardPile;
+	m_DiscardPile.Reset(0);
 	Shuffle();
 }
 
@@ -69,5 +76,13 @@ void ADeck::Shuffle()
 
 ACard* ADeck::DrawCard()
 {
+	if(m_DeckList.Num() == 0)
+		ShuffleDiscardIntoDeck();
 	return m_DeckList.Pop(EAllowShrinking::No);
+}
+
+void ADeck::DiscardCard(ACard* pCard)
+{
+	m_DiscardPile.Add(pCard);
+
 }

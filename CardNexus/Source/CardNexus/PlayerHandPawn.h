@@ -24,8 +24,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TObjectPtr<class UCameraComponent> m_pCamera{};
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	TObjectPtr<class USpringArmComponent> m_pSpringArm{};
+	UPROPERTY()
+	class APlayerHand* m_pHand{};
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UActorComponent> m_HandBlueprint;
+	void DrawCard();
 };

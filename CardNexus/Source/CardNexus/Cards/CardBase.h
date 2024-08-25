@@ -14,6 +14,8 @@
 
 #include "CardBase.generated.h"
 
+class UCardEffectLibrary;
+
 UENUM()
 enum class ECardAffectedArea {
 	Cone UMETA(DisplayName = "Cone"),
@@ -51,7 +53,8 @@ struct FCardData : public FTableRowBase {
 	FText m_EffectText{};
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UCardEffectComponent* m_PEffectComponent;
+	TSubclassOf<UCardEffectLibrary> m_Effect{};
+	
 };
 
 UCLASS()

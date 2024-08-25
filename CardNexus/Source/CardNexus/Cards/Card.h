@@ -7,20 +7,22 @@
 
 #include "Card.generated.h"
 
+class UCardEffectLibrary;
+class APlayerHand;
 class UStaticMeshComponent;
 class UTextRenderComponent;
 
 struct FCardData;
+
 UCLASS()
-class CARDNEXUS_API ACard : public AActor
-{
+class CARDNEXUS_API ACard : public AActor {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
 	ACard();
 	UFUNCTION(BlueprintCallable)
-	void Initialize(const FName& cardName);
+	void Initialize(const FName& cardName, class ADeck* deck);
 
 protected:
 	// Called when the game starts or when spawned
@@ -39,21 +41,28 @@ public:
 	FCardData* m_pCardData{};
 
 
-
 	UFUNCTION(BlueprintCallable)
 	FCardData GetCardData() const;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category="CardData")
+	void ActivateEffect();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CardData")
 	TObjectPtr<UTextRenderComponent> m_pNameRenderer;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CardData",meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CardData", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UTextRenderComponent> m_pTagRenderer;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CardData",meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CardData", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UTextRenderComponent> m_pEffectRenderer;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CardData")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CardData")
 	TObjectPtr<UStaticMeshComponent> m_pImageMesh;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	TSubclassOf<AActor> m_PlayerHandBP{};
+	APlayerHand* m_pHand{};
+	ADeck* m_pDeck{};
 
+	UPROPERTY()
+	UCardEffectLibrary* m_pCardEFfect;
 };

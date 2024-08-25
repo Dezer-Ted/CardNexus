@@ -5,6 +5,10 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "CardBase.h"
+#include "CardEffectLibrary.h"
+#include "Deck.h"
+#include "PlayerHand.h"
+#include "Kismet/GameplayStatics.h"
 
 ACard::ACard()
 {
@@ -13,9 +17,12 @@ ACard::ACard()
 
 }
 
-void ACard::Initialize(const FName& cardName)
+void ACard::Initialize(const FName& cardName, ADeck* deck)
 {
+	//TOOD: FIX IF MORE THAN ONE PLAYER HAND
 
+
+	m_pHand = Cast<APlayerHand>(UGameplayStatics::GetActorOfClass(GetWorld(), m_PlayerHandBP));
 	m_pItemDataTable = LoadObject<UDataTable>(nullptr,TEXT("DataTable'/Game/Resources/DataTables/CardDataNew.CardDataNew'"));
 	static const FString contextString(TEXT("Card Table Context"));
 	m_pCardData = m_pItemDataTable->FindRow<FCardData>(cardName, contextString, true);
@@ -27,19 +34,23 @@ void ACard::Initialize(const FName& cardName)
 		FString enumString{UEnum::GetValueAsString(tag)};
 		int32   colonIndex{};
 		enumString.FindLastChar(':', colonIndex);
-		tagString += enumString.Mid(colonIndex+1) + " | ";
+		tagString += enumString.Mid(colonIndex + 1) + " | ";
 	}
 	FString enumString{UEnum::GetValueAsString(m_pCardData->m_AffectedArea)};
 	int32   colonIndex{};
 	enumString.FindLastChar(':', colonIndex);
-	tagString += enumString.Mid(colonIndex+1) + " | ";
+	tagString += enumString.Mid(colonIndex + 1);
 	if(m_pCardData->m_Range != 0)
 	{
-		tagString += FString::FromInt(m_pCardData->m_Range) + "sq.";
+		tagString += " | " + FString::FromInt(m_pCardData->m_Range) + "sq.";
 	}
 	m_pTagRenderer->SetText(FText::FromString(tagString));
 	m_pEffectRenderer->SetText(m_pCardData->m_EffectText);
 	m_pImageMesh->SetMaterial(0, m_pCardData->m_pImage);
+	m_pCardEFfect = NewObject<UCardEffectLibrary>(this, m_pCardData->m_Effect);
+	m_pCardEFfect->RegisterComponent();
+	AddInstanceComponent(m_pCardEFfect);
+
 }
 
 // Called when the game starts or when spawned
@@ -60,4 +71,10 @@ void ACard::Tick(float DeltaTime)
 FCardData ACard::GetCardData() const
 {
 	return *m_pCardData;
+}
+
+void ACard::ActivateEffect()
+{
+	m_pCardEFfect->ActivateEffect();
+	m_pHand->RemoveCard(this);
 }
