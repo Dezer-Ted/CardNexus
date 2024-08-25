@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CardBase.h"
 #include "GameFramework/Actor.h"
+class ACard;
 #include "Deck.generated.h"
 
 UCLASS()
@@ -19,15 +20,20 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	const int32 m_MaxCardsPerDeck{3};
+	const int32 m_ShuffleCycles{10};
+	const SIZE_T m_StartingDeckSize{15};
 	virtual void BeginPlay() override;
 	void InitBaseCardList();
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category="Cards")
-	TArray<ACardBase*> m_DeckList;
+	TArray<ACard*> m_DeckList;
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category="Cards")
-	TArray<FName> m_CardNames;
+	TArray<FName> m_CardNames{};
 	UPROPERTY(EditDefaultsOnly,Category="Cards")
-	TSubclassOf<ACardBase> m_CardActor;
+	TSubclassOf<ACard> m_CardActor;
+	void Shuffle();
+	ACard* DrawCard();
 };
