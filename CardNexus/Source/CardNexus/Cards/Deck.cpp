@@ -37,7 +37,7 @@ void ADeck::InitBaseCardList()
 
 		for(int32 i = 0; i < m_MaxCardsPerDeck; ++i)
 		{
-			auto* card{world->SpawnActor<ACard>(m_CardActor, FVector{0, 0, 0}, FRotator::ZeroRotator, spawnParams)};
+			auto* card{world->SpawnActor<ACard>(m_CardActor, FVector{0, 0, -10000}, FRotator::ZeroRotator, spawnParams)};
 			card->Initialize(names[j], this);
 			m_DeckList.Add(card);
 		}
