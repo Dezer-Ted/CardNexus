@@ -3,8 +3,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GridCell.h"
+#include "Components/ChildActorComponent.h"
 #include "GameFramework/Actor.h"
 #include "Grid.generated.h"
+
+USTRUCT()
+struct FAStarHelper {
+	GENERATED_BODY()
+	int32         gCost{};
+	float         hCost{};
+	FAStarHelper* pParent{};
+	AGridCell*    pOwner{};
+
+	bool operator==(const FAStarHelper& other) const
+	{
+		return gCost == other.gCost && FMath::IsNearlyEqual(hCost, other.hCost) && pParent == other.pParent;
+	}
+};
+
+bool CompareNodes(const std::pair<AGridCell*, FAStarHelper>& node1, const std::pair<AGridCell*, FAStarHelper>& node2);
+bool FindNode(const std::pair<AGridCell*, FAStarHelper>& element, AGridCell* pCell);
 
 UCLASS()
 class CARDNEXUS_API AGrid : public AActor {
@@ -17,21 +36,28 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 m_GridWidth{8};
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32                                      m_GridLength{20};
+	const int32                                m_CellWidth{210};
+	static const int32                         m_MovementCost{5};
+	void                                       SetupNeighbors(AGridCell* pCell);
+	std::pair<bool, AGridCell*>                ValidateCell(const FCellCoord& coords);
+	static std::pair<AGridCell*, FAStarHelper> CalculateCost(AGridCell* pCurrentCell, std::pair<AGridCell*, FAStarHelper>* pParent, FCellCoord end);
+	static float                               CalculateHeuristicCost(const FCellCoord& coord1, const FCellCoord& coord2);
+	//static TArray<AGridCell*> 
+	void                                       CreateGrid();
 
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32 m_GridWidth{8};
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32 m_GridLength{20};
 
-	const int32 m_CellWidth{210};
+	inline static TArray<TArray<class UChildActorComponent*>> m_Grid{};
 
-	TArray<TArray<class UChildActorComponent*>> m_Grid;
+	static AGridCell*         GetCellAtIndex(FCellCoord coords);
+	static TArray<AGridCell*> GetPathTo(FCellCoord start, FCellCoord end);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<class AActor> m_CellBP{};
-
-	void CreateGrid();
 };

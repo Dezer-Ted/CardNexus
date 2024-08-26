@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "GridCell.generated.h"
 
+class AUnitBase;
+
 UENUM()
 enum class EGridDirections {
 	NORTH UMETA(DisplayName="North"),
@@ -13,26 +15,33 @@ enum class EGridDirections {
 	EAST UMETA(DisplayName="East"),
 	WEST UMETA(DisplayName="West")
 };
-UCLASS()
-class CARDNEXUS_API AGridCell : public AActor
-{
+
+USTRUCT()
+struct FCellCoord {
 	GENERATED_BODY()
-	
-public:	
+	int32 X;
+	int32 Y;
+};
+
+UCLASS()
+class CARDNEXUS_API AGridCell : public AActor {
+	GENERATED_BODY()
+
+public:
 	// Sets default values for this actor's properties
 	AGridCell();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	UPROPERTY()
-	TMap<EGridDirections,AGridCell*> m_NeighborMap{};
-	
-	
 
-	
-public:	
+public:
+	UPROPERTY()
+	TMap<EGridDirections, AGridCell*> m_NeighborMap{};
+	FCellCoord                        m_CellCord{};
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
+
+	UPROPERTY()
+	AUnitBase* m_CurrentUnit{};
 };

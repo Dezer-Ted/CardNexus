@@ -4,6 +4,7 @@
 #include "CardNexus/Combat/CombatPlayerController.h"
 
 #include "CardNexus/Cards/Card.h"
+#include "CardNexus/Grid/Grid.h"
 
 void ACombatPlayerController::BeginPlay()
 {
@@ -48,5 +49,9 @@ void ACombatPlayerController::PlayerTick(float DeltaTime)
 	if(WasInputKeyJustReleased(EKeys::LeftMouseButton))
 	{
 		DetectHit();
+	}
+	if(WasInputKeyJustReleased(EKeys::RightMouseButton))
+	{
+		AGrid::GetPathTo(FCellCoord{0, 0}, FCellCoord{10, 5});
 	}
 }
