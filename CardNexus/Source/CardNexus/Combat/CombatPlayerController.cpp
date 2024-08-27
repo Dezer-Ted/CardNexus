@@ -5,6 +5,7 @@
 
 #include "CardNexus/Cards/Card.h"
 #include "CardNexus/Grid/Grid.h"
+#include "Kismet/GameplayStatics.h"
 
 void ACombatPlayerController::BeginPlay()
 {
@@ -12,6 +13,9 @@ void ACombatPlayerController::BeginPlay()
 	bShowMouseCursor = true;
 	bEnableClickEvents = true;
 	bEnableMouseOverEvents = true;
+
+	m_pPlayer = Cast<APlayerUnit>(UGameplayStatics::GetActorOfClass(GetWorld(), m_PlayerUnitBP));
+
 }
 
 void ACombatPlayerController::DetectHit()
@@ -35,6 +39,10 @@ void ACombatPlayerController::DetectHit()
 				if(card)
 					card->ActivateEffect();
 
+				auto cell{Cast<AGridCell>(hitResult.GetActor())};
+				if(cell)
+					m_pPlayer->SetPath(AGrid::FindPath(FCellCoord{0, 0}, cell->m_CellCord));
+
 			}
 		}
 
@@ -52,6 +60,6 @@ void ACombatPlayerController::PlayerTick(float DeltaTime)
 	}
 	if(WasInputKeyJustReleased(EKeys::RightMouseButton))
 	{
-		AGrid::GetPathTo(FCellCoord{0, 0}, FCellCoord{10, 5});
+
 	}
 }

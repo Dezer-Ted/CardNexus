@@ -2,10 +2,14 @@
 
 #pragma once
 
+#include <list>
+
 #include "CoreMinimal.h"
 #include "GridCell.h"
+#include "IContentBrowserSingleton.h"
 #include "Components/ChildActorComponent.h"
 #include "GameFramework/Actor.h"
+#include "Containers/List.h"
 #include "Grid.generated.h"
 
 USTRUCT()
@@ -47,7 +51,7 @@ protected:
 	static std::pair<AGridCell*, FAStarHelper> CalculateCost(AGridCell* pCurrentCell, std::pair<AGridCell*, FAStarHelper>* pParent, FCellCoord end);
 	static float                               CalculateHeuristicCost(const FCellCoord& coord1, const FCellCoord& coord2);
 	//static TArray<AGridCell*> 
-	void                                       CreateGrid();
+	void CreateGrid();
 
 public:
 	// Called every frame
@@ -55,8 +59,10 @@ public:
 
 	inline static TArray<TArray<class UChildActorComponent*>> m_Grid{};
 
-	static AGridCell*         GetCellAtIndex(FCellCoord coords);
-	static TArray<AGridCell*> GetPathTo(FCellCoord start, FCellCoord end);
+	static AGridCell*                           GetCellAtIndex(FCellCoord coords);
+	static TArray<AGridCell*>                   GetPathTo(FCellCoord start, FCellCoord end);
+	static TArray<AGridCell*>                   FindPath(const FCellCoord& start, const FCellCoord& end);
+	static std::pair<AGridCell*, FAStarHelper>* FindNode(const std::list<std::pair<AGridCell*, FAStarHelper>*>& list, AGridCell* target);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<class AActor> m_CellBP{};

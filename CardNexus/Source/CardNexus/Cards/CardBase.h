@@ -47,7 +47,7 @@ struct FCardData : public FTableRowBase {
 	ECardAffectedArea m_AffectedArea{};
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 m_Range;
+	int32 m_Range{};
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FText m_EffectText{};
@@ -57,7 +57,7 @@ struct FCardData : public FTableRowBase {
 	
 };
 
-UCLASS()
+UCLASS()	
 class CARDNEXUS_API ACardBase : public AActor {
 	GENERATED_BODY()
 

@@ -20,9 +20,18 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	bool         m_MoveToPath{false};
-	
+
 	UPROPERTY()
 	TArray<AGridCell*> m_Path;
+	void               FollowPath(float dt);
+	UPROPERTY()
+	AGridCell* m_Target{};
+	FVector    m_StartPos{};
+	FVector    m_TargetPos{};
+	float      m_TimePassed{};
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float m_TimePerSegment{2.f};
 
 public:
 	// Called every frame
