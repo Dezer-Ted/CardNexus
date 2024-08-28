@@ -3,7 +3,9 @@
 
 #include "CardNexus/Grid/UnitBase.h"
 
+#include "Grid.h"
 #include "GridCell.h"
+#include "CardNexus/Combat/CombatGM.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -18,6 +20,8 @@ AUnitBase::AUnitBase()
 void AUnitBase::BeginPlay()
 {
 	Super::BeginPlay();
+	m_HitPoints = m_MaxHitPoints;
+	StartTurn();
 }
 
 void AUnitBase::FollowPath(float dt)
@@ -47,6 +51,28 @@ void AUnitBase::FollowPath(float dt)
 	}
 }
 
+void AUnitBase::EndTurn() const
+{
+	m_pCombatGM->AdvanceInitiative();
+}
+
+int32 AUnitBase::GetHitPoints() const
+{
+	return m_HitPoints;
+}
+
+void AUnitBase::AddHitPoints(int32 hpDelta)
+{
+	m_HitPoints += hpDelta;
+	if(m_HitPoints >= m_MaxHitPoints)
+		m_HitPoints = m_MaxHitPoints;
+	else if(m_HitPoints <= 0)
+	{
+		DeathEvent.Broadcast();
+	}
+
+}
+
 // Called every frame
 void AUnitBase::Tick(float DeltaTime)
 {
@@ -55,16 +81,35 @@ void AUnitBase::Tick(float DeltaTime)
 	{
 		FollowPath(DeltaTime);
 	}
-
-
 }
 
 void AUnitBase::SetPath(TArray<AGridCell*> path)
 {
+	if(m_CurrentMovementSpeed == 0)
+		return;
 	m_Path = path;
 	if(m_Path.IsEmpty())
 		return;
-	m_Path.Pop();
 	Algo::Reverse(m_Path);
+	if(m_Path.Num() >= m_CurrentMovementSpeed)
+		m_Path.SetNum(m_CurrentMovementSpeed, EAllowShrinking::Yes);
+	m_CurrentMovementSpeed -= m_Path.Num();
 	m_MoveToPath = true;
+	m_GridPos = m_Path.Top()->m_CellCord;
+	m_Path.Top()->m_CurrentUnit = this;
+}
+
+FCellCoord AUnitBase::GetGridPosition() const
+{
+	return m_GridPos;
+}
+
+void AUnitBase::SetGridPosition(FCellCoord coord)
+{
+	m_GridPos = coord;
+}
+
+void AUnitBase::StartTurn()
+{
+	m_CurrentMovementSpeed = m_MovementSpeed;
 }

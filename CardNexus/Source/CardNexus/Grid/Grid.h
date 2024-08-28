@@ -40,6 +40,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 m_GridWidth{8};
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -56,11 +57,10 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	
 	inline static TArray<TArray<class UChildActorComponent*>> m_Grid{};
 
 	static AGridCell*                           GetCellAtIndex(FCellCoord coords);
-	static TArray<AGridCell*>                   GetPathTo(FCellCoord start, FCellCoord end);
 	static TArray<AGridCell*>                   FindPath(const FCellCoord& start, const FCellCoord& end);
 	static std::pair<AGridCell*, FAStarHelper>* FindNode(const std::list<std::pair<AGridCell*, FAStarHelper>*>& list, AGridCell* target);
 

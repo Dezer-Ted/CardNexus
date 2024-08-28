@@ -23,6 +23,13 @@ void AGrid::BeginPlay()
 {
 	Super::BeginPlay();
 
+}
+
+void AGrid::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+
 	for(int i = 0; i < m_Grid.Num(); ++i)
 	{
 		for(int j = 0; j < m_Grid[i].Num(); ++j)
@@ -38,9 +45,7 @@ void AGrid::BeginPlay()
 		{
 			SetupNeighbors(Cast<AGridCell>(m_Grid[i][j]->GetChildActor()));
 		}
-		UE_LOG(LogTemp, Warning, TEXT("genereatedNEighbors"))
 	}
-	UE_LOG(LogTemp, Warning, TEXT("genereatedNEighbors"))
 }
 
 // Called every frame
@@ -55,120 +60,6 @@ AGridCell* AGrid::GetCellAtIndex(FCellCoord coords)
 	return Cast<AGridCell>(m_Grid[coords.X][coords.Y]->GetChildActor());
 }
 
-TArray<AGridCell*> AGrid::GetPathTo(FCellCoord start, FCellCoord end)
-{
-	/*TArray<AGridCell*>                             path;
-	std::list<std::pair<AGridCell*, FAStarHelper>> openList;
-	std::list<std::pair<AGridCell*, FAStarHelper>> closedList;
-	openList.push_back(std::make_pair<AGridCell*, FAStarHelper>(GetCellAtIndex(start), FAStarHelper{0, 0, nullptr, GetCellAtIndex(start)}));
-	AGridCell* pEndCell{GetCellAtIndex(end)};
-	while(!openList.empty())
-	{
-		auto pCurrentCell = Algo::MinElement(openList, &CompareNodes);
-
-		UE_LOG(LogTemp, Warning, TEXT("CurrentCell  X: %d, Y:%d gCost: %d hCost: %f"), pCurrentCell->first->m_CellCord.X,
-		       pCurrentCell->first->m_CellCord.Y, pCurrentCell->second.gCost, pCurrentCell->second.hCost);
-
-		if(pCurrentCell->first == pEndCell)
-		{
-			auto* currentHelper = &pCurrentCell->second;
-			path.Add(pCurrentCell->first);
-
-			while(currentHelper->pParent != nullptr)
-			{
-
-				currentHelper = currentHelper->pParent;
-				if(currentHelper == currentHelper->pParent)
-				{
-					UE_LOG(LogTemp, Error, TEXT("Error: Loop detected "));
-					break;
-				}
-				if(currentHelper->pOwner == nullptr)
-				{
-					// Sanity check to avoid accessing a nullptr, which could indicate an issue
-					UE_LOG(LogTemp, Error, TEXT("Error: Found a nullptr in the parent chain!"));
-					break;
-				}
-				path.Add(currentHelper->pOwner);
-				//UE_LOG(LogTemp, Warning, TEXT("currentCell  X: %d, Y:%d"), currentHelper->pOwner->m_CellCord.X, currentHelper->pOwner->m_CellCord.Y);
-			}
-			return path;
-		}
-		closedList.push_back(*pCurrentCell);
-		openList.remove(*pCurrentCell);
-		/*openList.RemoveAll([pCurrentCell](const std::pair<AGridCell*, FAStarHelper>& elem)
-		{
-			return elem.first == pCurrentCell->first;
-		});#1#
-		for(const auto& neighbor : pCurrentCell->first->m_NeighborMap)
-		{
-			if(!neighbor.Value)
-			{
-
-				UE_LOG(LogTemp, Warning, TEXT("SkippedNeighbor"));
-
-				continue;
-			}
-
-			auto pNeighborData{CalculateCost(neighbor.Value, pCurrentCell, end)};
-			if(!pNeighborData.first)
-				continue;
-			auto pEntry = Algo::FindByPredicate(closedList, [pNeighborData](const std::pair<AGridCell*, FAStarHelper>& elem)
-			{
-				return FindNode(elem, pNeighborData.first);
-			});
-			UE_LOG(LogTemp, Warning, TEXT("NeighborCell  X: %d, Y:%d gCost: %d hCost: %f"), pNeighborData.first->m_CellCord.X,
-			       pNeighborData.first->m_CellCord.Y, pNeighborData.second.gCost, pNeighborData.second.hCost);
-
-			if(!pEntry)
-			{
-
-				auto pOpenListEntry = Algo::FindByPredicate(openList, [&pNeighborData](const std::pair<AGridCell*, FAStarHelper>& elem)
-				{
-					return FindNode(elem, pNeighborData.first);
-				});
-				if(!pOpenListEntry)
-				{
-
-					UE_LOG(LogTemp, Warning, TEXT("addedCell  X: %d, Y:%d gCost: %d hCost: %f"), pNeighborData.first->m_CellCord.X,
-					       pNeighborData.first->m_CellCord.Y, pNeighborData.second.gCost, pNeighborData.second.hCost);
-					openList.push_back(pNeighborData);
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("pOpenListEntryCell  X: %d, Y:%d gCost: %d hCost: %f"), pOpenListEntry->first->m_CellCord.X,
-					       pOpenListEntry->first->m_CellCord.Y, pOpenListEntry->second.gCost, pOpenListEntry->second.hCost);
-
-					if(pOpenListEntry->second.gCost > pCurrentCell->second.gCost + m_MovementCost)
-					{
-						UE_LOG(LogTemp, Warning, TEXT("Reparented node at X:%d Y:%d to X:%d Y:%d"), pOpenListEntry->first->m_CellCord.X,
-						       pOpenListEntry->first->m_CellCord.Y, pNeighborData.first->m_CellCord.X, pNeighborData.first->m_CellCord.Y)
-
-						if(pCurrentCell->second.pParent != &pNeighborData.second)
-							continue;
-						pOpenListEntry->second = pNeighborData.second;
-						pOpenListEntry->second.pParent = &pCurrentCell->second;
-						pOpenListEntry->second.gCost = pCurrentCell->second.gCost + m_MovementCost;
-					}
-				}
-			}
-			/*else
-			{
-
-				UE_LOG(LogTemp, Warning, TEXT("pEntryCell  X: %d, Y:%d gCost: %d hCost: %f"), pEntry->first->m_CellCord.X,
-				       pEntry->first->m_CellCord.Y, pEntry->second.gCost, pEntry->second.hCost);
-				if(pEntry->second.gCost < pCurrentCell->second.gCost)
-				{
-					*pEntry = pNeighborData;
-				}
-			}#1#
-
-		}
-	}
-
-	return path;*/
-	return TArray<AGridCell*>{};
-}
 
 void AGrid::SetupNeighbors(AGridCell* pCell)
 {
@@ -231,7 +122,7 @@ std::pair<bool, AGridCell*> AGrid::ValidateCell(const FCellCoord& coords)
 {
 	if(coords.X < 0 || coords.Y < 0)
 		return std::make_pair<bool, AGridCell*>(false, nullptr);
-	if(coords.X >= m_GridLength - 1 || coords.Y >= m_GridWidth - 1)
+	if(coords.X >= m_GridLength || coords.Y >= m_GridWidth)
 		return std::make_pair<bool, AGridCell*>(false, nullptr);
 
 	AGridCell* outCell = GetCellAtIndex(coords);
@@ -280,15 +171,7 @@ TArray<AGridCell*> AGrid::FindPath(const FCellCoord& start, const FCellCoord& en
 
 	while(!openList.empty())
 	{
-		/*auto currIT{std::min_element(openList.begin(), openList.end(), [](const node* node1, const node* node2)
-		{
-			return node1->second.gCost + node1->second.hCost < node2->second.gCost + node2->second.hCost;
-		})};
-		if(currIT == openList.end())
-		{
-			continue;
-		}
-		current = *currIT;*/
+
 		float lowestPath{10000};
 
 		for(const auto& node : openList)
@@ -300,20 +183,13 @@ TArray<AGridCell*> AGrid::FindPath(const FCellCoord& start, const FCellCoord& en
 				current = node;
 			}
 		}
-		//current = *std::min_element(openList.begin(), openList.end(), [](const node* node1, const node* node2)
-		//);
-		/*current = *Algo::MinElement(openList, [](const auto& node1, const auto& node2)
-		{
-			CompareNodes(*node1, *node2);
-		});*/
-		//Found Target
+
 		if(current->first == GetCellAtIndex(end))
 		{
 
 			UE_LOG(LogTemp, Warning, TEXT("finished"));
 			break;
 		}
-		//Bugged list input
 		closedList.push_back(current);
 		openList.remove(current);
 		UE_LOG(LogTemp, Warning, TEXT("NewNode"))
@@ -321,10 +197,7 @@ TArray<AGridCell*> AGrid::FindPath(const FCellCoord& start, const FCellCoord& en
 		{
 			if(neighbor.Value == nullptr)
 				continue;
-			/*if(auto pCell = *Algo::FindByPredicate(closedList, [neighbor](const auto& elem)
-			{
-				return FindNode(elem, neighbor.Value);
-			}))*/
+
 
 			if(FindNode(closedList, neighbor.Value))
 			{
@@ -333,16 +206,7 @@ TArray<AGridCell*> AGrid::FindPath(const FCellCoord& start, const FCellCoord& en
 
 			UE_LOG(LogTemp, Warning, TEXT("NeighborCoordinate: X:%d,Y:%d"), neighbor.Value->m_CellCord.X, neighbor.Value->m_CellCord.Y);
 			int32 gCost = current->second.gCost + m_MovementCost;
-			/*auto  successor{*Algo::FindByPredicate(openList, [neighbor](const auto& elem)
-			{
-				return FindNode(*elem, neighbor.Value);
-			})};*/
-			/*auto successor = std::find_if(openList.begin(), openList.end(), [neighbor](const auto* node)
-			{
-				if(!neighbor.Value || !node)
-					return false;
-				return node->first->m_CellCord.X == neighbor.Value->m_CellCord.X && node->first->m_CellCord.Y == neighbor.Value->m_CellCord.Y;
-			});*/
+
 			auto pSuccessor = FindNode(openList, neighbor.Value);
 			if(!pSuccessor)
 			{
