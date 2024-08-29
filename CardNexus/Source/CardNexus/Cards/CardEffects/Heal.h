@@ -27,4 +27,6 @@ public:
 
 	virtual void ActivateEffect() override;
 		
+private:
+	const uint32 m_HealAmount{ 6 };
 };

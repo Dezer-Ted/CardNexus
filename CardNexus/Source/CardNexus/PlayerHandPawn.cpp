@@ -2,8 +2,6 @@
 
 
 #include "PlayerHandPawn.h"
-
-#include "NavigationSystemTypes.h"
 #include "Camera/CameraComponent.h"
 #include "Cards/PlayerHand.h"
 #include "GameFramework/SpringArmComponent.h"

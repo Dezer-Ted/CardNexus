@@ -6,7 +6,7 @@
 
 #include "CoreMinimal.h"
 #include "GridCell.h"
-#include "IContentBrowserSingleton.h"
+//#include "IContentBrowserSingleton.h"
 #include "Components/ChildActorComponent.h"
 #include "GameFramework/Actor.h"
 #include "Containers/List.h"

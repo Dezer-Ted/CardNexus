@@ -1,7 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CardNexus/Cards/CardEffects/Heal.h"
+#include "Kismet/GameplayStatics.h"
+#include "CardNexus/Grid/PlayerUnit.h"
+
 
 // Sets default values for this component's properties
 UHeal::UHeal()
@@ -35,5 +37,16 @@ void UHeal::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentT
 void UHeal::ActivateEffect()
 {
 	Super::ActivateEffect();
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerUnit::StaticClass(), FoundActors);
+
+	if (FoundActors.Num() > 0)
+	{
+		APlayerUnit* player = Cast<APlayerUnit>(FoundActors[0]);
+		if (player)
+		{
+			player->AddHitPoints(m_HealAmount);
+		}
+	}
 }
 
