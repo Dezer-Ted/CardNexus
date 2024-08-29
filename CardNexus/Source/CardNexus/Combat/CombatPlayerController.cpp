@@ -42,6 +42,8 @@ void ACombatPlayerController::DetectHit() const
 				auto cell{Cast<AGridCell>(hitResult.GetActor())};
 				if(cell)
 				{
+					if(cell->m_CurrentUnit != nullptr)
+						return;
 					m_pPlayer->SetPath(AGrid::FindPath(m_pPlayer->GetGridPosition(), cell->m_CellCord));
 				}
 			}
