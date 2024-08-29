@@ -9,6 +9,7 @@
 #include "CardNexus/Combat/Initiative/InitiativeList.h"
 #include "CardNexus/Combat/Initiative/InitCard.h"
 #include "Components/ListView.h"
+#include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
 
 void ACombatPlayerController::BeginPlay()
@@ -51,12 +52,14 @@ void ACombatPlayerController::DetectHit() const
 	}
 }
 
-void ACombatPlayerController::AddUnitsToInitList(TArray<UInitCard*> units)
+void ACombatPlayerController::AddUnitsToInitList(const TArray<UInitViewEntry*>& units)
 {
-	for(auto unit : units)
+	/*for(const auto& unit : units)
 	{
-		m_InitList->m_pList->AddItem(unit);
-	}
+		auto entry{Cast<UInitCard>(CreateWidget(m_InitList->m_pList, m_InitCardBP))};
+		m_InitList->m_pList->AddItem(entry);
+	}*/
+	m_InitList->m_pList->SetListItems(units);
 }
 
 void ACombatPlayerController::PostInitializeComponents()

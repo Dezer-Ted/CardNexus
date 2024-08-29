@@ -12,6 +12,8 @@
 #include "CardNexus/Grid/PlayerUnit.h"
 #include "Components/TextBlock.h"
 #include "Initiative/InitCard.h"
+#include "Initiative/InitiativeList.h"
+#include "Initiative/InitViewEntry.h"
 
 void ACombatGM::AdvanceInitiative()
 {
@@ -45,8 +47,8 @@ void ACombatGM::BeginPlay()
 {
 	Super::BeginPlay();
 	TArray<FUnitData> units{};
-	units.Add(FUnitData{0, 0, EUnitType::PlayerUnit});
-	units.Add(FUnitData{5, 5, EUnitType::EnemyUnit});
+	units.Add(FUnitData{0, 0, ECombatUnitType::PlayerUnit});
+	units.Add(FUnitData{5, 5, ECombatUnitType::EnemyUnit});
 	m_pPlayerController = GetWorld()->GetFirstPlayerController();
 	LoadInit(units);
 	StartInitiative();
@@ -61,7 +63,7 @@ void ACombatGM::LoadInit(const TArray<FUnitData>& units)
 		FActorSpawnParameters spawnParams{};
 		switch(unit.m_Type)
 		{
-		case EUnitType::PlayerUnit:
+		case ECombatUnitType::PlayerUnit:
 			{
 				unitType = m_PlayerUnitBP;
 				auto playerUnit = Cast<APlayerUnit>(
@@ -73,7 +75,7 @@ void ACombatGM::LoadInit(const TArray<FUnitData>& units)
 				Cast<ACombatPlayerController>(m_pPlayerController)->m_pPlayer = playerUnit;
 				break;
 			}
-		case EUnitType::EnemyUnit:
+		case ECombatUnitType::EnemyUnit:
 			{
 				unitType = m_EnemyUnitBP;
 				auto enemyUnit = Cast<
@@ -113,19 +115,19 @@ void ACombatGM::StartInitiative()
 
 void ACombatGM::UpdateInitHud()
 {
-	TArray<UInitCard*> cards;
+	TArray<UInitViewEntry*> cards;
 	for(auto card : m_ActiveInit)
 	{
-		auto tempCard{CreateWidget<UInitCard>(m_pPlayerController, m_InitCardBP)};
-		tempCard->m_InitCounter->SetText(FText::FromString(FString::FromInt(card->second)));
-		tempCard->m_UnitName->SetText(FText::FromName(card->first->m_UnitName));
+		UInitViewEntry* tempCard{NewObject<UInitViewEntry>()};
+		tempCard->m_Name = FText::FromString(card->first->m_UnitName.ToString());
+		tempCard->m_Init = FText::AsNumber(card->second);
 		cards.Add(tempCard);
 	}
 	for(const auto& card : m_Initiative)
 	{
-		auto tempCard{CreateWidget<UInitCard>(m_pPlayerController, m_InitCardBP)};
-		tempCard->m_InitCounter->SetText(FText::FromString(FString::FromInt(card.second)));
-		tempCard->m_UnitName->SetText(FText::FromName(card.first->m_UnitName));
+		UInitViewEntry* tempCard{NewObject<UInitViewEntry>()};
+		tempCard->m_Name = FText::FromString(card.first->m_UnitName.ToString());
+		tempCard->m_Init = FText::AsNumber(card.second);
 		cards.Add(tempCard);
 	}
 	Cast<ACombatPlayerController>(m_pPlayerController)->AddUnitsToInitList(cards);

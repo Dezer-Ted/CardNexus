@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "CardNexus/Grid/PlayerUnit.h"
 #include "GameFramework/PlayerController.h"
+#include "Initiative/InitiativeList.h"
+#include "Initiative/InitViewEntry.h"
 #include "CombatPlayerController.generated.h"
 
 class UInitiativeList;
@@ -22,11 +24,13 @@ protected:
 	void         DetectHit() const;
 
 public:
-	virtual void AddUnitsToInitList(TArray<UInitCard*> units);
+	virtual void AddUnitsToInitList(const TArray<UInitViewEntry*>& units);
 	virtual void PostInitializeComponents() override;
 	virtual void PlayerTick(float DeltaTime) override;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<APlayerUnit> m_PlayerUnitBP;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UInitCard> m_InitCardBP;
 
 	UPROPERTY()
 	APlayerUnit* m_pPlayer;

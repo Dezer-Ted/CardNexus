@@ -22,7 +22,7 @@ void UHaste::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+
 }
 
 
@@ -38,15 +38,14 @@ void UHaste::ActivateEffect()
 {
 	Super::ActivateEffect();
 	TArray<AActor*> FoundActors;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerUnit::StaticClass(), FoundActors);
-    
-    if (FoundActors.Num() > 0)
-    {
-    	APlayerUnit* player = Cast<APlayerUnit>(FoundActors[0]);
-    	if (player)
-    	{
-    			player->m_MovementSpeed = player->m_MovementSpeed * 2;
-    	}
-    }
-}
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerUnit::StaticClass(), FoundActors);
 
+	if(FoundActors.Num() > 0)
+	{
+		APlayerUnit* player = Cast<APlayerUnit>(FoundActors[0]);
+		if(player)
+		{
+			player->m_CurrentMovementSpeed += player->m_MovementSpeed;
+		}
+	}
+}

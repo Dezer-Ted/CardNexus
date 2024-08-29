@@ -11,6 +11,12 @@
 /**
  * 
  */
+USTRUCT()
+struct FInitListEntry {
+	GENERATED_BODY()
+	FText m_Name{};
+	FText m_Init{};
+};
 UCLASS()
 class CARDNEXUS_API UInitiativeList : public UUserWidget {
 	GENERATED_BODY()

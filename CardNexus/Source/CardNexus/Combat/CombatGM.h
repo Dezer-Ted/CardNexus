@@ -17,7 +17,7 @@ class AEnemyUnit;
  * 
  */
 UENUM()
-enum class EUnitType {
+enum class ECombatUnitType {
 	PlayerUnit UMETA(DisplayName ="PlayerUnit"),
 	EnemyUnit UMETA(DisplayName = "EnemyUnit")
 };
@@ -26,7 +26,7 @@ USTRUCT()
 struct FUnitData {
 	GENERATED_BODY()
 	FCellCoord m_Coords{};
-	EUnitType  m_Type{};
+	ECombatUnitType  m_Type{};
 };
 
 UCLASS()
