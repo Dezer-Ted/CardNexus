@@ -171,9 +171,7 @@ TArray<AGridCell*> AGrid::FindPath(const FCellCoord& start, const FCellCoord& en
 
 	while(!openList.empty())
 	{
-
 		float lowestPath{10000};
-
 		for(const auto& node : openList)
 		{
 			float fcost = node->second.gCost + node->second.hCost;
@@ -183,43 +181,27 @@ TArray<AGridCell*> AGrid::FindPath(const FCellCoord& start, const FCellCoord& en
 				current = node;
 			}
 		}
-
 		if(current->first == GetCellAtIndex(end))
 		{
-
-			UE_LOG(LogTemp, Warning, TEXT("finished"));
 			break;
 		}
 		closedList.push_back(current);
 		openList.remove(current);
-		UE_LOG(LogTemp, Warning, TEXT("NewNode"))
 		for(auto neighbor : current->first->m_NeighborMap)
 		{
 			if(neighbor.Value == nullptr)
 				continue;
-
-
-			if(FindNode(closedList, neighbor.Value))
+			if(FindNode(closedList, neighbor.Value) || neighbor.Value->m_CurrentUnit != nullptr)
 			{
 				continue;
 			}
-
-			UE_LOG(LogTemp, Warning, TEXT("NeighborCoordinate: X:%d,Y:%d"), neighbor.Value->m_CellCord.X, neighbor.Value->m_CellCord.Y);
 			int32 gCost = current->second.gCost + m_MovementCost;
-
-			auto pSuccessor = FindNode(openList, neighbor.Value);
+			auto  pSuccessor = FindNode(openList, neighbor.Value);
 			if(!pSuccessor)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Prepared for open List X:%d Y:%d | parent X:%d Y:%d"), neighbor.Value->m_CellCord.X,
-				       neighbor.Value->m_CellCord.Y,
-				       current->first->m_CellCord.X, current->first->m_CellCord.Y);
 				node newNode{
 					std::make_pair(neighbor.Value, FAStarHelper{gCost, CalculateHeuristicCost(neighbor.Value->m_CellCord, end), &current->second,
 						               neighbor.Value})};
-
-				UE_LOG(LogTemp, Warning, TEXT("AddedToOpenList X:%d Y:%d | parent X:%d Y:%d"), newNode.first->m_CellCord.X,
-				       newNode.first->m_CellCord.Y,
-				       newNode.second.pParent->pOwner->m_CellCord.X, newNode.second.pParent->pOwner->m_CellCord.Y);
 				allNodes.push_back(newNode);
 				openList.push_back(&allNodes.back());
 			}
@@ -227,9 +209,6 @@ TArray<AGridCell*> AGrid::FindPath(const FCellCoord& start, const FCellCoord& en
 			{
 				if(gCost < pSuccessor->second.gCost)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("ReParented X:%d Y:%d | parent X:%d Y:%d"), pSuccessor->first->m_CellCord.X,
-					       pSuccessor->first->m_CellCord.Y,
-					       current->first->m_CellCord.X, current->first->m_CellCord.Y);
 					pSuccessor->second.pParent = &current->second;
 					pSuccessor->second.gCost = gCost;
 				}
@@ -240,8 +219,7 @@ TArray<AGridCell*> AGrid::FindPath(const FCellCoord& start, const FCellCoord& en
 	FAStarHelper*      pHelper{&current->second};
 	while(pHelper->pParent != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("current X:%d Y:%d | parent X:%d Y:%d"), pHelper->pOwner->m_CellCord.X, pHelper->pOwner->m_CellCord.Y,
-		       pHelper->pParent->pOwner->m_CellCord.X, pHelper->pParent->pOwner->m_CellCord.Y);
+
 		path.Add(pHelper->pOwner);
 		pHelper = pHelper->pParent;
 	}
