@@ -10,6 +10,7 @@
 #include "CardNexus/Combat/Initiative/InitCard.h"
 #include "Components/ListView.h"
 #include "Components/TextBlock.h"
+#include "Initiative/EndTurnButton.h"
 #include "Kismet/GameplayStatics.h"
 
 void ACombatPlayerController::BeginPlay()
@@ -22,6 +23,8 @@ void ACombatPlayerController::BeginPlay()
 
 void ACombatPlayerController::DetectHit() const
 {
+	if(!m_pPlayer->m_IsTurnPlayer)
+		return;
 	FVector worldLocation{};
 	FVector worldDirection{};
 	if(DeprojectMousePositionToWorld(worldLocation, worldDirection))
@@ -67,6 +70,8 @@ void ACombatPlayerController::PostInitializeComponents()
 	Super::PostInitializeComponents();
 	m_InitList = CreateWidget<UInitiativeList>(GetWorld(), m_InitListBP);
 	m_InitList->AddToViewport();
+	m_EndTurnButton = CreateWidget<UEndTurnButton>(GetWorld(), m_EndTurnButtonBP);
+	m_EndTurnButton->AddToViewport();
 }
 
 void ACombatPlayerController::PlayerTick(float DeltaTime)

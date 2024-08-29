@@ -41,8 +41,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 m_HitPoints{};
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32               m_MaxHitPoints{30};
-	void                EndTurn() const;
+	int32 m_MaxHitPoints{30};
 
 public:
 	// Called every frame
@@ -52,9 +51,9 @@ public:
 	int32 GetHitPoints() const;
 	void  AddHitPoints(int32 hpDelta);
 	FName m_UnitName{};
-    int32               m_MovementSpeed{5};
-	int32               m_CurrentMovementSpeed{};
-    
+	int32 m_MovementSpeed{5};
+	int32 m_CurrentMovementSpeed{};
+	bool  m_IsTurnPlayer{};
 	UPROPERTY(BlueprintAssignable)
 	FDeathDelegate     DeathEvent;
 	virtual void       Tick(float DeltaTime) override;
@@ -62,5 +61,7 @@ public:
 	virtual FCellCoord GetGridPosition() const;
 	virtual void       SetGridPosition(FCellCoord coord);
 	UFUNCTION(BlueprintCallable)
-	void StartTurn();
+	virtual void StartTurn();
+
+	virtual void EndTurn();
 };

@@ -9,6 +9,7 @@
 #include "Initiative/InitViewEntry.h"
 #include "CombatPlayerController.generated.h"
 
+class UEndTurnButton;
 class UInitiativeList;
 class UInitCard;
 /**
@@ -39,4 +40,10 @@ public:
 	TSubclassOf<UInitiativeList> m_InitListBP;
 	UPROPERTY()
 	UInitiativeList* m_InitList{};
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UEndTurnButton> m_EndTurnButtonBP;
+	UPROPERTY()
+	UEndTurnButton* m_EndTurnButton;
+
+	
 };

@@ -21,7 +21,6 @@ void AUnitBase::BeginPlay()
 {
 	Super::BeginPlay();
 	m_HitPoints = m_MaxHitPoints;
-	StartTurn();
 }
 
 void AUnitBase::FollowPath(float dt)
@@ -51,8 +50,9 @@ void AUnitBase::FollowPath(float dt)
 	}
 }
 
-void AUnitBase::EndTurn() const
+void AUnitBase::EndTurn()
 {
+	m_IsTurnPlayer = false;
 	m_pCombatGM->AdvanceInitiative();
 }
 
@@ -85,6 +85,7 @@ void AUnitBase::Tick(float DeltaTime)
 
 void AUnitBase::SetPath(TArray<AGridCell*> path)
 {
+	AGrid::GetCellAtIndex(m_GridPos)->m_CurrentUnit = nullptr;
 	if(m_CurrentMovementSpeed == 0)
 		return;
 	m_Path = path;
@@ -112,4 +113,5 @@ void AUnitBase::SetGridPosition(FCellCoord coord)
 void AUnitBase::StartTurn()
 {
 	m_CurrentMovementSpeed = m_MovementSpeed;
+	m_IsTurnPlayer = true;
 }

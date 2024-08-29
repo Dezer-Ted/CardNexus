@@ -18,17 +18,16 @@
 void ACombatGM::AdvanceInitiative()
 {
 	m_ActiveInit.erase(std::remove(m_ActiveInit.begin(), m_ActiveInit.end(), m_TurnUnit));
-	auto maxElem = *std::max_element(m_ActiveInit.begin(), m_ActiveInit.end(), [](InitEntry* entry1, InitEntry* entry2)
+	auto maxElem = std::max_element(m_ActiveInit.begin(), m_ActiveInit.end(), [](InitEntry* entry1, InitEntry* entry2)
 	{
 		return entry1->second < entry2->second;
 
 	});
-	if(maxElem == nullptr)
+	if(maxElem == m_ActiveInit.end())
 	{
 		for(auto& elem : m_Initiative)
 		{
 			m_ActiveInit.push_back(&elem);
-
 		}
 		std::sort(m_ActiveInit.begin(), m_ActiveInit.end(), [](InitEntry* entry1, InitEntry* entry2)
 		{
@@ -38,8 +37,9 @@ void ACombatGM::AdvanceInitiative()
 	}
 	else
 	{
-		m_TurnUnit = maxElem;
+		m_TurnUnit = *maxElem;
 	}
+	m_TurnUnit->first->StartTurn();
 	UpdateInitHud();
 }
 
@@ -108,7 +108,8 @@ void ACombatGM::StartInitiative()
 	{
 		return entry1->second > entry2->second;
 	});
-	m_TurnUnit = &m_Initiative.front();
+	m_TurnUnit = m_ActiveInit.front();
+	UE_LOG(LogTemp, Warning, TEXT("TurnUnit: %s"), *m_TurnUnit->first->m_UnitName.ToString());
 	m_TurnUnit->first->StartTurn();
 	UpdateInitHud();
 }

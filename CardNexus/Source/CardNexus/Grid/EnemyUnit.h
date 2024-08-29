@@ -13,5 +13,6 @@ UCLASS()
 class CARDNEXUS_API AEnemyUnit : public AUnitBase
 {
 	GENERATED_BODY()
-	
+	virtual void StartTurn() override;
+	virtual void EndTurn() override;
 };
