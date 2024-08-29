@@ -2,6 +2,8 @@
 
 
 #include "CardNexus/Cards/CardEffects/Haste.h"
+#include "Kismet/GameplayStatics.h"
+#include "CardNexus/Grid/PlayerUnit.h"
 
 // Sets default values for this component's properties
 UHaste::UHaste()
@@ -35,5 +37,16 @@ void UHaste::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponent
 void UHaste::ActivateEffect()
 {
 	Super::ActivateEffect();
+	TArray<AActor*> FoundActors;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerUnit::StaticClass(), FoundActors);
+    
+    if (FoundActors.Num() > 0)
+    {
+    	APlayerUnit* player = Cast<APlayerUnit>(FoundActors[0]);
+    	if (player)
+    	{
+    			player->m_MovementSpeed = player->m_MovementSpeed * 2;
+    	}
+    }
 }
 

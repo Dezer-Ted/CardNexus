@@ -42,7 +42,6 @@ protected:
 	int32 m_HitPoints{};
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32               m_MaxHitPoints{30};
-	int32               m_MovementSpeed{5};
 	int32               m_CurrentMovementSpeed{};
 	void                EndTurn() const;
 
@@ -54,7 +53,8 @@ public:
 	int32 GetHitPoints() const;
 	void  AddHitPoints(int32 hpDelta);
 	FName m_UnitName{};
-
+    int32               m_MovementSpeed{5};
+    
 	UPROPERTY(BlueprintAssignable)
 	FDeathDelegate     DeathEvent;
 	virtual void       Tick(float DeltaTime) override;
