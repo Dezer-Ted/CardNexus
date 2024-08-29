@@ -5,6 +5,7 @@
 
 #include "Blueprint/UserWidget.h"
 #include "CardNexus/Cards/Card.h"
+#include "CardNexus/Cards/CardEffectLibrary.h"
 #include "CardNexus/Grid/Grid.h"
 #include "CardNexus/Combat/Initiative/InitiativeList.h"
 #include "CardNexus/Combat/Initiative/InitCard.h"
@@ -21,7 +22,7 @@ void ACombatPlayerController::BeginPlay()
 	bEnableMouseOverEvents = true;
 }
 
-void ACombatPlayerController::DetectHit() const
+void ACombatPlayerController::DetectHit()
 {
 	if(!m_pPlayer->m_IsTurnPlayer)
 		return;
@@ -39,6 +40,14 @@ void ACombatPlayerController::DetectHit() const
 		{
 			if(hitResult.GetActor())
 			{
+				if(m_IsOrientationMode)
+				{
+					auto pos = hitResult.GetActor()->GetActorLocation();
+					m_pCurrentlyResolvingCard->ResolveEffect(pos);
+					m_IsOrientationMode = false;
+					m_pCurrentlyResolvingCard = nullptr;
+					return;
+				}
 				auto card{Cast<ACard>(hitResult.GetActor())};
 				if(card)
 					card->ActivateEffect();
@@ -53,6 +62,12 @@ void ACombatPlayerController::DetectHit() const
 			}
 		}
 	}
+}
+
+void ACombatPlayerController::StartOrientation(UCardEffectLibrary* card)
+{
+	m_IsOrientationMode = true;
+	m_pCurrentlyResolvingCard = card;
 }
 
 void ACombatPlayerController::AddUnitsToInitList(const TArray<UInitViewEntry*>& units)

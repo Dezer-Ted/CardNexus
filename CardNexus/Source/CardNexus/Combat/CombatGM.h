@@ -10,6 +10,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "CombatGM.generated.h"
 
+class UCardEffectLibrary;
 class UInitCard;
 class APlayerUnit;
 class AEnemyUnit;
@@ -25,8 +26,8 @@ enum class ECombatUnitType {
 USTRUCT()
 struct FUnitData {
 	GENERATED_BODY()
-	FCellCoord m_Coords{};
-	ECombatUnitType  m_Type{};
+	FCellCoord      m_Coords{};
+	ECombatUnitType m_Type{};
 };
 
 UCLASS()
@@ -35,6 +36,7 @@ class CARDNEXUS_API ACombatGM : public AGameModeBase {
 
 public:
 	void AdvanceInitiative();
+	
 
 protected:
 	virtual void BeginPlay() override;

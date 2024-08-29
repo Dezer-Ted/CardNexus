@@ -22,9 +22,14 @@ private:
 
 protected:
 	virtual void BeginPlay() override;
-	void         DetectHit() const;
+	void         DetectHit();
+
+	bool m_IsOrientationMode{false};
+	UPROPERTY()
+	class UCardEffectLibrary* m_pCurrentlyResolvingCard{nullptr};
 
 public:
+	void         StartOrientation(UCardEffectLibrary* card);
 	virtual void AddUnitsToInitList(const TArray<UInitViewEntry*>& units);
 	virtual void PostInitializeComponents() override;
 	virtual void PlayerTick(float DeltaTime) override;
@@ -44,6 +49,4 @@ public:
 	TSubclassOf<UEndTurnButton> m_EndTurnButtonBP;
 	UPROPERTY()
 	UEndTurnButton* m_EndTurnButton;
-
-	
 };

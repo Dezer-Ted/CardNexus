@@ -25,8 +25,13 @@ void UCardEffectLibrary::BeginPlay()
 
 void UCardEffectLibrary::ActivateEffect()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Activated ability"));
 
+}
+
+void UCardEffectLibrary::ResolveEffect(const FVector& direction)
+{
+	//THrow projectile in direction
+	
 }
 
 

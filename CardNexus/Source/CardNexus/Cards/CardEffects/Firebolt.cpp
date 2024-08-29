@@ -3,6 +3,10 @@
 
 #include "CardNexus/Cards/CardEffects/Firebolt.h"
 
+#include "CardNexus/Combat/CombatGM.h"
+#include "CardNexus/Combat/CombatPlayerController.h"
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values for this component's properties
 UFirebolt::UFirebolt()
 {
@@ -20,7 +24,7 @@ void UFirebolt::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+
 }
 
 
@@ -32,8 +36,15 @@ void UFirebolt::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	// ...
 }
 
+void UFirebolt::ResolveEffect(const FVector& pos)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Resolved Effect"));
+}
+
 void UFirebolt::ActivateEffect()
 {
 	Super::ActivateEffect();
-}
-
+	ACombatGM* gameMode{Cast<ACombatGM>(UGameplayStatics::GetGameMode(GetWorld()))};
+	auto       pc = Cast<ACombatPlayerController>(GetWorld()->GetFirstPlayerController());
+	pc->StartOrientation(this);
+}	

@@ -43,6 +43,8 @@ void ACombatGM::AdvanceInitiative()
 	UpdateInitHud();
 }
 
+
+
 void ACombatGM::BeginPlay()
 {
 	Super::BeginPlay();
