@@ -3,6 +3,7 @@
 
 #include "CardNexus/Cards/CardEffects/Firebolt.h"
 
+#include "Animation/AnimSequenceHelpers.h"
 #include "CardNexus/Combat/CombatGM.h"
 #include "CardNexus/Combat/CombatPlayerController.h"
 #include "Kismet/GameplayStatics.h"
@@ -38,7 +39,29 @@ void UFirebolt::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 void UFirebolt::ResolveEffect(const FVector& pos)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Resolved Effect"));
+	//UE_LOG(LogTemp, Warning, TEXT("Resolved Effect"));
+
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerUnit::StaticClass(), FoundActors);
+    
+	if (FoundActors.Num() > 0)
+	{
+		APlayerUnit* player = Cast<APlayerUnit>(FoundActors[0]);
+		if (player)
+		{
+			auto playerPos = player->GetGridPosition();
+			FVector2f targetPos;
+			targetPos.X = playerPos.X - pos.X;
+			targetPos.Y = playerPos.Y - pos.Y;
+			targetPos.Normalize();
+			
+			if(targetPos.X > -0.5 && targetPos.X < 0.5 && targetPos.Y > 0.5)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("North"));
+			}
+		}
+	}
+
 }
 
 void UFirebolt::ActivateEffect()
