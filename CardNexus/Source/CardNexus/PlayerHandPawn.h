@@ -28,5 +28,6 @@ public:
 	class APlayerHand* m_pHand{};
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UActorComponent> m_HandBlueprint;
-	void DrawCard();
+	void                         DrawCard();
+
 };

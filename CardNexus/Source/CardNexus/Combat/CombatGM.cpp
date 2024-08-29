@@ -7,6 +7,7 @@
 
 #include "CombatPlayerController.h"
 #include "Blueprint/UserWidget.h"
+#include "CardNexus/Cards/PlayerHand.h"
 #include "CardNexus/Grid/EnemyUnit.h"
 #include "CardNexus/Grid/Grid.h"
 #include "CardNexus/Grid/PlayerUnit.h"
@@ -14,10 +15,12 @@
 #include "Initiative/InitCard.h"
 #include "Initiative/InitiativeList.h"
 #include "Initiative/InitViewEntry.h"
+#include "Kismet/GameplayStatics.h"
 
 void ACombatGM::AdvanceInitiative()
 {
 	m_ActiveInit.erase(std::remove(m_ActiveInit.begin(), m_ActiveInit.end(), m_TurnUnit));
+
 	auto maxElem = std::max_element(m_ActiveInit.begin(), m_ActiveInit.end(), [](InitEntry* entry1, InitEntry* entry2)
 	{
 		return entry1->second < entry2->second;
@@ -34,6 +37,7 @@ void ACombatGM::AdvanceInitiative()
 			return entry1->second > entry2->second;
 		});
 		m_TurnUnit = m_ActiveInit.front();
+		++m_TurnCounter;
 	}
 	else
 	{
@@ -41,8 +45,11 @@ void ACombatGM::AdvanceInitiative()
 	}
 	m_TurnUnit->first->StartTurn();
 	UpdateInitHud();
+	if(Cast<APlayerUnit>(m_TurnUnit->first))
+	{
+		m_pPlayerHand->DrawCard();
+	}
 }
-
 
 
 void ACombatGM::BeginPlay()
@@ -52,6 +59,9 @@ void ACombatGM::BeginPlay()
 	units.Add(FUnitData{0, 0, ECombatUnitType::PlayerUnit});
 	units.Add(FUnitData{5, 5, ECombatUnitType::EnemyUnit});
 	m_pPlayerController = GetWorld()->GetFirstPlayerController();
+	FTimerHandle timerHandle;
+	GetWorldTimerManager().SetTimer(timerHandle, this, &ACombatGM::InitHand, 1.f, false);
+
 	LoadInit(units);
 	StartInitiative();
 }
@@ -101,6 +111,7 @@ void ACombatGM::AddToInitiative(const InitEntry& entry)
 
 void ACombatGM::StartInitiative()
 {
+
 	for(auto& elem : m_Initiative)
 	{
 		m_ActiveInit.push_back(&elem);
@@ -134,4 +145,19 @@ void ACombatGM::UpdateInitHud()
 		cards.Add(tempCard);
 	}
 	Cast<ACombatPlayerController>(m_pPlayerController)->AddUnitsToInitList(cards);
+}
+
+void ACombatGM::InitHand()
+{
+	m_pPlayerHand = Cast<APlayerHand>(UGameplayStatics::GetActorOfClass(GetWorld(), m_pPlayerHandBP));
+	for(int i = 0; i < m_pPlayerHand->m_StartingHandSize; ++i)
+	{
+		m_pPlayerHand->DrawCard();
+	}
+}
+
+void ACombatGM::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
 }

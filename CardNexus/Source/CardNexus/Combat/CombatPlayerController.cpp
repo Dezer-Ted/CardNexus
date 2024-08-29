@@ -42,7 +42,7 @@ void ACombatPlayerController::DetectHit()
 			{
 				if(m_IsOrientationMode)
 				{
-					auto pos = hitResult.GetActor()->GetActorLocation();
+					auto pos = hitResult.ImpactPoint;
 					m_pCurrentlyResolvingCard->ResolveEffect(pos);
 					m_IsOrientationMode = false;
 					m_pCurrentlyResolvingCard = nullptr;

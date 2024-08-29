@@ -27,6 +27,7 @@ void APlayerHand::BeginPlay()
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), deckType, decks);
 	m_pDeck = Cast<ADeck>(decks[0]);
 
+
 	//m_HandCards.Add(m_pDeck->DrawCard());
 }
 
@@ -65,6 +66,12 @@ void APlayerHand::ConstructHand()
 		m_HandCards[counter]->SetActorLocation(currentPos);
 		++counter;
 	}
+
+}
+
+void APlayerHand::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
 
 }
 

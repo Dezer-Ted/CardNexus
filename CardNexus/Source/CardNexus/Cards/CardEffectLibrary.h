@@ -19,6 +19,7 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	virtual void DetermineDirection(FVector mousePos);
 public:	
 	// Called every frame
 	virtual void ActivateEffect();

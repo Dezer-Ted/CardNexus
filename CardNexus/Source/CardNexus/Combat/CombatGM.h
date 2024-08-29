@@ -36,7 +36,6 @@ class CARDNEXUS_API ACombatGM : public AGameModeBase {
 
 public:
 	void AdvanceInitiative();
-	
 
 protected:
 	virtual void BeginPlay() override;
@@ -53,10 +52,18 @@ private:
 	InitEntry*              m_TurnUnit{nullptr};
 	std::list<InitEntry>    m_Initiative;
 	std::vector<InitEntry*> m_ActiveInit;
-	inline static int32     m_EnemyCount{};
-	void                    AddToInitiative(const InitEntry& entry);
-	void                    StartInitiative();
-	void                    UpdateInitHud();
+	UPROPERTY()
+	class APlayerHand* m_pPlayerHand{};
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> m_pPlayerHandBP{};
+	inline static int32 m_EnemyCount{};
+	void                AddToInitiative(const InitEntry& entry);
+	void                StartInitiative();
+	void                UpdateInitHud();
+	void                InitHand();
+	bool                m_InitStart{false};
+	int32               m_TurnCounter{};
+	virtual void        Tick(float DeltaSeconds) override;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UInitCard> m_InitCardBP;
 };
