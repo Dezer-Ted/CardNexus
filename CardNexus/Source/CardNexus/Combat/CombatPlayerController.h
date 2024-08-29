@@ -7,6 +7,8 @@
 #include "GameFramework/PlayerController.h"
 #include "CombatPlayerController.generated.h"
 
+class UInitiativeList;
+class UInitCard;
 /**
  * 
  */
@@ -17,13 +19,20 @@ private:
 
 protected:
 	virtual void BeginPlay() override;
-	void         DetectHit();
+	void         DetectHit() const;
 
 public:
+	virtual void AddUnitsToInitList(TArray<UInitCard*> units);
+	virtual void PostInitializeComponents() override;
 	virtual void PlayerTick(float DeltaTime) override;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<APlayerUnit> m_PlayerUnitBP;
 
 	UPROPERTY()
 	APlayerUnit* m_pPlayer;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UInitiativeList> m_InitListBP;
+	UPROPERTY()
+	UInitiativeList* m_InitList{};
 };

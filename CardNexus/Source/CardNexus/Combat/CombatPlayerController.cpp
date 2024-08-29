@@ -3,8 +3,12 @@
 
 #include "CardNexus/Combat/CombatPlayerController.h"
 
+#include "Blueprint/UserWidget.h"
 #include "CardNexus/Cards/Card.h"
 #include "CardNexus/Grid/Grid.h"
+#include "CardNexus/Combat/Initiative/InitiativeList.h"
+#include "CardNexus/Combat/Initiative/InitCard.h"
+#include "Components/ListView.h"
 #include "Kismet/GameplayStatics.h"
 
 void ACombatPlayerController::BeginPlay()
@@ -13,16 +17,12 @@ void ACombatPlayerController::BeginPlay()
 	bShowMouseCursor = true;
 	bEnableClickEvents = true;
 	bEnableMouseOverEvents = true;
-
-	m_pPlayer = Cast<APlayerUnit>(UGameplayStatics::GetActorOfClass(GetWorld(), m_PlayerUnitBP));
-
 }
 
-void ACombatPlayerController::DetectHit()
+void ACombatPlayerController::DetectHit() const
 {
-	FVector2D mousePos{};
-	FVector   worldLocation{};
-	FVector   worldDirection{};
+	FVector worldLocation{};
+	FVector worldDirection{};
 	if(DeprojectMousePositionToWorld(worldLocation, worldDirection))
 	{
 		FVector               start{PlayerCameraManager->GetCameraLocation()};
@@ -44,13 +44,24 @@ void ACombatPlayerController::DetectHit()
 				{
 					m_pPlayer->SetPath(AGrid::FindPath(m_pPlayer->GetGridPosition(), cell->m_CellCord));
 				}
-
 			}
 		}
-
 	}
+}
 
+void ACombatPlayerController::AddUnitsToInitList(TArray<UInitCard*> units)
+{
+	for(auto unit : units)
+	{
+		m_InitList->m_pList->AddItem(unit);
+	}
+}
 
+void ACombatPlayerController::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	m_InitList = CreateWidget<UInitiativeList>(GetWorld(), m_InitListBP);
+	m_InitList->AddToViewport();
 }
 
 void ACombatPlayerController::PlayerTick(float DeltaTime)

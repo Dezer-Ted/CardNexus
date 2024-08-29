@@ -1,10 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CardNexus/Combat/Initiative/InitHUD.h"
+#include "CardNexus/Combat/Initiative/InitiativeList.h"
 
-
-void UInitHUD::NativeConstruct()
+void UInitiativeList::NativeConstruct()
 {
 	Super::NativeConstruct();
 }
