@@ -3,6 +3,8 @@
 
 #include "CardNexus/Cards/CardEffects/Firebreath.h"
 
+#include "CardNexus/Cards/Card.h"
+#include "CardNexus/Cards/CardBase.h"
 #include "CardNexus/Combat/CombatPlayerController.h"
 #include "CardNexus/Grid/Grid.h"
 #include "Kismet/GameplayStatics.h"
@@ -55,6 +57,8 @@ void UFirebreath::AddNeighbors(EGridDirections direction, TArray<AGridCell*>& ef
 		}
 		else
 			break;
+
+		currentCell = neighbourCell;
 	}
 }
 
@@ -78,9 +82,10 @@ void UFirebreath::ResolveEffect(const FVector& pos)
 	AGridCell* playerCell = AGrid::GetCellAtIndex(playerCoord);
 	EGridDirections direction = DetermineDirection(pos);
 	AGridCell* currentCell = playerCell;
-	
+
+	auto cardData = Cast<ACard>(GetOwner())->GetCardData();
 	//Get the first line from the player to the Max Range
-	AddNeighbors(direction, effectedCells, currentCell, 2);
+	AddNeighbors(direction, effectedCells, currentCell, cardData.m_Range);
 	
 	// Get the cells on the sides
 	int beforeArrSize = effectedCells.Num();
@@ -92,18 +97,18 @@ void UFirebreath::ResolveEffect(const FVector& pos)
 	        if(direction == EGridDirections::NORTH || direction == EGridDirections::SOUTH)
             {
 	        	//add neighbors West of cell
-	        	AddNeighbors(EGridDirections::WEST, effectedCells, currentCell, j);
+	        	AddNeighbors(EGridDirections::WEST, effectedCells, currentCell, i);
 
 	        	//add neigbors East of cell
-	        	AddNeighbors(EGridDirections::EAST, effectedCells, currentCell, j);
+	        	AddNeighbors(EGridDirections::EAST, effectedCells, currentCell, i);
             }
             else
             {
             	//add neighbors North of cell
-            	AddNeighbors(EGridDirections::NORTH, effectedCells, currentCell, j);
+            	AddNeighbors(EGridDirections::NORTH, effectedCells, currentCell, i);
 
             	//add neigbors South of cell
-            	AddNeighbors(EGridDirections::SOUTH, effectedCells, currentCell, j);
+            	AddNeighbors(EGridDirections::SOUTH, effectedCells, currentCell, i);
             }
 	    }
 	}
