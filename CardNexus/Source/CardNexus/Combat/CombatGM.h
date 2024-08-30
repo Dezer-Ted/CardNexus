@@ -36,6 +36,7 @@ class CARDNEXUS_API ACombatGM : public AGameModeBase {
 
 public:
 	void AdvanceInitiative();
+	void OnUnitDeath(AUnitBase* pUnit);
 
 protected:
 	virtual void BeginPlay() override;
@@ -50,6 +51,8 @@ private:
 	void                LoadInit(const TArray<FUnitData>& units);
 	GENERATED_BODY()
 	InitEntry*              m_TurnUnit{nullptr};
+	UPROPERTY()
+	TArray<AUnitBase*> m_Units;
 	std::list<InitEntry>    m_Initiative;
 	std::vector<InitEntry*> m_ActiveInit;
 	UPROPERTY()

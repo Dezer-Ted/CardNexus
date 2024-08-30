@@ -28,6 +28,13 @@ void AUnitBase::BeginPlay()
 	AddHitPoints(0);
 }
 
+void AUnitBase::Death()
+{
+	m_pCombatGM->OnUnitDeath(this);
+	AGrid::GetCellAtIndex(m_GridPos)->m_CurrentUnit = nullptr;
+	Destroy();
+}
+
 void AUnitBase::FollowPath(float dt)
 {
 	if(!m_Target)
@@ -89,6 +96,7 @@ void AUnitBase::AddHitPoints(int32 hpDelta)
 	else if(m_HitPoints <= 0)
 	{
 		DeathEvent.Broadcast();
+		Death();
 	}
 	Cast<UFloatingHealth>(m_pHpBarWidget->GetWidget())->SetHealth(m_HitPoints, m_MaxHitPoints);
 
@@ -120,6 +128,8 @@ void AUnitBase::SetPath(TArray<AGridCell*> path)
 	if(index != -1)
 	{
 		m_Path.SetNum(index, EAllowShrinking::Yes);
+		if(m_Path.Num() == 0)
+			return;
 	}
 
 	if(m_Path.Top()->m_CurrentUnit != nullptr)

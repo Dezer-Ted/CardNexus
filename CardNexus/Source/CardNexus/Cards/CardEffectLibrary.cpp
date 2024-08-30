@@ -56,11 +56,11 @@ EGridDirections UCardEffectLibrary::DetermineDirection(FVector mousePos)
 			}
 			else if(FMath::Abs(targetPos.Y - 1.0f) < Tolerance && FMath::Abs(targetPos.X) < Tolerance)
 			{
-				return EGridDirections::WEST;
+				return EGridDirections::EAST;
 			}
 			else if(FMath::Abs(targetPos.Y + 1.0f) < Tolerance && FMath::Abs(targetPos.X) < Tolerance)
 			{
-				return EGridDirections::EAST;
+				return EGridDirections::WEST;
 			}
 		}
 	}

@@ -10,5 +10,6 @@ void AEnviromentUnit::BeginPlay()
 	Super::BeginPlay();
 	auto cell = AGrid::GetCellAtIndex({m_XPos, m_YPos});
 	cell->m_CurrentUnit = this;
+	SetGridPosition(cell->m_CellCord);
 	SetActorLocation(cell->GetActorLocation());
 }

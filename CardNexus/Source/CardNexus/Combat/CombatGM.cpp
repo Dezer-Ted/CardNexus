@@ -51,6 +51,22 @@ void ACombatGM::AdvanceInitiative()
 	}
 }
 
+void ACombatGM::OnUnitDeath(AUnitBase* pUnit)
+{
+	auto eraseIT = std::remove_if(m_ActiveInit.begin(), m_ActiveInit.end(), [pUnit](InitEntry* entry)
+	{
+		return entry->first == pUnit;
+	});
+	if(eraseIT != m_ActiveInit.end())
+		m_ActiveInit.erase(eraseIT);
+	m_Initiative.remove_if([pUnit](const InitEntry& entry)
+	{
+		return entry.first == pUnit;
+	});
+
+	UpdateInitHud();
+}
+
 
 void ACombatGM::BeginPlay()
 {
@@ -58,6 +74,8 @@ void ACombatGM::BeginPlay()
 	TArray<FUnitData> units{};
 	units.Add(FUnitData{0, 0, ECombatUnitType::PlayerUnit});
 	units.Add(FUnitData{5, 5, ECombatUnitType::EnemyUnit});
+	units.Add(FUnitData{15, 5, ECombatUnitType::EnemyUnit});
+	units.Add(FUnitData{12, 7, ECombatUnitType::EnemyUnit});
 	m_pPlayerController = GetWorld()->GetFirstPlayerController();
 	FTimerHandle timerHandle;
 	GetWorldTimerManager().SetTimer(timerHandle, this, &ACombatGM::InitHand, 1.f, false);
@@ -80,10 +98,13 @@ void ACombatGM::LoadInit(const TArray<FUnitData>& units)
 				unitType = m_PlayerUnitBP;
 				auto playerUnit = Cast<APlayerUnit>(
 					GetWorld()->SpawnActor<AActor>(unitType, cell->GetActorLocation(), FRotator::ZeroRotator, spawnParams));
+				m_Units.Add(playerUnit);
 				InitEntry entry{InitEntry{playerUnit, 5}};
 				AddToInitiative(entry);
 				playerUnit->m_pCombatGM = this;
 				playerUnit->m_UnitName = FName{TEXT("Player")};
+				playerUnit->SetGridPosition(unit.m_Coords);
+				cell->m_CurrentUnit = playerUnit;
 				Cast<ACombatPlayerController>(m_pPlayerController)->m_pPlayer = playerUnit;
 				break;
 			}
@@ -92,11 +113,15 @@ void ACombatGM::LoadInit(const TArray<FUnitData>& units)
 				unitType = m_EnemyUnitBP;
 				auto enemyUnit = Cast<
 					AEnemyUnit>(GetWorld()->SpawnActor<AActor>(unitType, cell->GetActorLocation(), FRotator::ZeroRotator, spawnParams));
-				AddToInitiative(InitEntry{enemyUnit, FMath::RandRange(0, 8)});
+				m_Units.Add(enemyUnit);
+				AddToInitiative(InitEntry{enemyUnit, FMath::RandRange(1, 8)});
 				cell->m_CurrentUnit = enemyUnit;
 				enemyUnit->SetGridPosition(unit.m_Coords);
+
+				cell->m_CurrentUnit = enemyUnit;
 				enemyUnit->m_pCombatGM = this;
 				enemyUnit->m_UnitName = FName{TEXT("Enemy ") + FString::FromInt(m_EnemyCount)};
+				++m_EnemyCount;
 				break;
 			}
 		}

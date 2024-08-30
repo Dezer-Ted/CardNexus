@@ -27,7 +27,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	bool         m_MoveToPath{false};
-
+	virtual void Death();
 	UPROPERTY()
 	TArray<AGridCell*> m_Path;
 	void               FollowPath(float dt);
