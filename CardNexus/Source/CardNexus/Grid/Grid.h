@@ -45,7 +45,7 @@ protected:
 	int32 m_GridWidth{8};
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32                                      m_GridLength{20};
-	const int32                                m_CellWidth{210};
+	const int32                                m_CellWidth{200};
 	static const int32                         m_MovementCost{5};
 	void                                       SetupNeighbors(AGridCell* pCell);
 	std::pair<bool, AGridCell*>                ValidateCell(const FCellCoord& coords);
