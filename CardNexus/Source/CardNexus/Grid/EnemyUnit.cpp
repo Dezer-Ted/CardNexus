@@ -46,6 +46,7 @@ void AEnemyUnit::ReachedDestination()
 void AEnemyUnit::WalkToTarget()
 {
 	FCellCoord targetCoord{m_pTarget->GetGridPosition()};
+	UE_LOG(LogTemp, Warning, TEXT("TargetCoords: X%i,Y%i"), targetCoord.X, targetCoord.Y);
 	SetPath(AGrid::FindPath(GetGridPosition(), targetCoord));
 }
 

@@ -3,3 +3,8 @@
 
 #include "CardNexus/Grid/PlayerUnit.h"
 
+void APlayerUnit::Death()
+{
+	
+	Super::Death();
+}

@@ -35,5 +35,12 @@ void UGameOverScreen::gameWon(bool won)
 
 void UGameOverScreen::NativeConstruct()
 {
-	
+	if(m_pQuitButton)
+	{
+		m_pQuitButton->OnClicked.AddDynamic(this,&UGameOverScreen::OnQuitClicked);
+	}
+	if(m_pPlayAgainButton)
+	{
+		m_pPlayAgainButton->OnClicked.AddDynamic(this, &UGameOverScreen::OnPlayAgainClicked);
+	}
 }

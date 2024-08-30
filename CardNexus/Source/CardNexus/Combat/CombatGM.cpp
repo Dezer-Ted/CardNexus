@@ -12,6 +12,7 @@
 #include "CardNexus/Grid/Grid.h"
 #include "CardNexus/Grid/PlayerUnit.h"
 #include "Components/TextBlock.h"
+#include "HUD/GameOverScreen.h"
 #include "Initiative/InitCard.h"
 #include "Initiative/InitiativeList.h"
 #include "Initiative/InitViewEntry.h"
@@ -53,6 +54,13 @@ void ACombatGM::AdvanceInitiative()
 
 void ACombatGM::OnUnitDeath(AUnitBase* pUnit)
 {
+	if(Cast<APlayerUnit>(pUnit))
+	{
+		m_pGameOver = Cast<UGameOverScreen>(CreateWidget(m_pPlayerController, m_pGameOverBP));
+		m_pGameOver->gameWon(false);
+		m_pGameOver->AddToViewport();
+	}
+
 	auto eraseIT = std::remove_if(m_ActiveInit.begin(), m_ActiveInit.end(), [pUnit](InitEntry* entry)
 	{
 		return entry->first == pUnit;
@@ -63,7 +71,24 @@ void ACombatGM::OnUnitDeath(AUnitBase* pUnit)
 	{
 		return entry.first == pUnit;
 	});
+	if(Cast<AEnemyUnit>(pUnit))
+	{
+		int32 counter{};
+		for(const auto& elem : m_Initiative)
+		{
+			if(Cast<AEnemyUnit>(elem.first))
+			{
+				++counter;
+			}
+		}
+		if(counter == 0)
+		{
+			m_pGameOver = Cast<UGameOverScreen>(CreateWidget(m_pPlayerController, m_pGameOverBP));
+			m_pGameOver->gameWon(true);
+			m_pGameOver->AddToViewport();
+		}
 
+	}
 	UpdateInitHud();
 }
 

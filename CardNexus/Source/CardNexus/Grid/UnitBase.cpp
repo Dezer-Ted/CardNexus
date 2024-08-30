@@ -77,6 +77,7 @@ int32 AUnitBase::CheckIfValidPath()
 	{
 		if(m_Path[i]->m_CurrentUnit)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Invalid Cell at %i"), i);
 			return i;
 		}
 	}
@@ -134,7 +135,7 @@ void AUnitBase::SetPath(TArray<AGridCell*> path)
 
 	if(m_Path.Top()->m_CurrentUnit != nullptr)
 		return;
-
+	UE_LOG(LogTemp, Warning, TEXT("End Destination X:%i,Y%i"), m_Path.Top()->m_CellCord.X, m_Path.Top()->m_CellCord.Y);
 	m_MoveToPath = true;
 	m_GridPos = m_Path.Top()->m_CellCord;
 	m_Path.Top()->m_CurrentUnit = this;

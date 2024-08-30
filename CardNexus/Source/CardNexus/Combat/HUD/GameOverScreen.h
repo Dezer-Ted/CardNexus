@@ -30,6 +30,7 @@ public:
 
 	UFUNCTION()
 	void OnQuitClicked();
+	UFUNCTION()
 	void OnPlayAgainClicked();
 	void gameWon(bool won);
 };

@@ -6,12 +6,15 @@
 #include "CardNexus/Grid/UnitBase.h"
 #include "PlayerUnit.generated.h"
 
+class UGameOverScreen;
 /**
  * 
  */
 UCLASS()
-class CARDNEXUS_API APlayerUnit : public AUnitBase
-{
+class CARDNEXUS_API APlayerUnit : public AUnitBase {
 	GENERATED_BODY()
-	
+
+private:
+	virtual void Death() override;
+
 };

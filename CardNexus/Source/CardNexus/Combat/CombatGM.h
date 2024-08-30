@@ -50,9 +50,9 @@ private:
 	TSubclassOf<AActor> m_PlayerUnitBP;
 	void                LoadInit(const TArray<FUnitData>& units);
 	GENERATED_BODY()
-	InitEntry*              m_TurnUnit{nullptr};
+	InitEntry* m_TurnUnit{nullptr};
 	UPROPERTY()
-	TArray<AUnitBase*> m_Units;
+	TArray<AUnitBase*>      m_Units;
 	std::list<InitEntry>    m_Initiative;
 	std::vector<InitEntry*> m_ActiveInit;
 	UPROPERTY()
@@ -69,4 +69,8 @@ private:
 	virtual void        Tick(float DeltaSeconds) override;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UInitCard> m_InitCardBP;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UUserWidget> m_pGameOverBP;
+	UPROPERTY()
+	class UGameOverScreen* m_pGameOver;
 };
