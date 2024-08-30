@@ -8,25 +8,24 @@
 #include "Thunderwave.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class CARDNEXUS_API UThunderwave : public UCardEffectLibrary
-{
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+class CARDNEXUS_API UThunderwave : public UCardEffectLibrary {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UThunderwave();
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	
-public:	
+
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void ResolveEffect(const FVector& pos) override;
 	virtual void ActivateEffect() override;
-	
+	virtual void ProjectEffect(const FVector& pos) override;
 private:
-    const int32 m_Damage{-3};
+	const int32 m_Damage{3};
 };

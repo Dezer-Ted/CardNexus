@@ -115,7 +115,8 @@ void AUnitBase::Tick(float DeltaTime)
 
 void AUnitBase::SetPath(TArray<AGridCell*> path)
 {
-	AGrid::GetCellAtIndex(m_GridPos)->m_CurrentUnit = nullptr;
+	if(m_MoveToPath)
+		return;
 	if(m_CurrentMovementSpeed == 0)
 		return;
 	m_Path = path;
@@ -136,6 +137,7 @@ void AUnitBase::SetPath(TArray<AGridCell*> path)
 	if(m_Path.Top()->m_CurrentUnit != nullptr)
 		return;
 	UE_LOG(LogTemp, Warning, TEXT("End Destination X:%i,Y%i"), m_Path.Top()->m_CellCord.X, m_Path.Top()->m_CellCord.Y);
+	AGrid::GetCellAtIndex(m_GridPos)->m_CurrentUnit = nullptr;
 	m_MoveToPath = true;
 	m_GridPos = m_Path.Top()->m_CellCord;
 	m_Path.Top()->m_CurrentUnit = this;

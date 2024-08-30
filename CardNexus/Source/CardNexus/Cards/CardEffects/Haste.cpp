@@ -53,5 +53,6 @@ void UHaste::ResolveEffect(const FVector& pos)
 			player->m_CurrentMovementSpeed += player->m_MovementSpeed;
 		}
 	}
+	Super::ResolveEffect(pos);
 }
 

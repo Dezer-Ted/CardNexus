@@ -45,7 +45,7 @@ public:
 	FCardData GetCardData() const;
 
 	void ActivateEffect();
-
+	void DiscardThisCard();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CardData")
 	TObjectPtr<UTextRenderComponent> m_pNameRenderer;
 

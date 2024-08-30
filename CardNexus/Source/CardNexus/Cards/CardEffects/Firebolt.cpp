@@ -35,37 +35,11 @@ void UFirebolt::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 void UFirebolt::ResolveEffect(const FVector& pos)
 {
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerUnit::StaticClass(), FoundActors);
-	
-	if(FoundActors.Num() == 0)
-		return;
-
-	APlayerUnit* player = Cast<APlayerUnit>(FoundActors[0]);
-	if(player == nullptr)
-		return;
-	
-	FCellCoord      playerCoord = player->GetGridPosition();
-	AGridCell*      playerCell = AGrid::GetCellAtIndex(playerCoord);
+	auto            player{GetPlayer()};
 	EGridDirections direction = DetermineDirection(pos);
-	AGridCell*      nextCell;
-	AGridCell*      currentCell = playerCell;
-	for(int i = 0; i < m_MaxTilesTravelled; i++)
-	{
-		nextCell = currentCell->m_NeighborMap[direction];
-		if(nextCell == nullptr)
-		{
-			//goes off the grid
-			break;
-		}
-		if(nextCell->m_CurrentUnit != nullptr)
-		{
-			//hit player
-			nextCell->m_CurrentUnit->AddHitPoints(m_Damage);
-			break;
-		}
-		currentCell = nextCell;
-	}
+	auto            target = GetProjectileTarget(direction, m_MaxTilesTravelled, player->GetGridPosition());
+	ApplyDamage({target}, m_Damage);
+	Super::ResolveEffect(pos);
 }
 
 void UFirebolt::ActivateEffect()
@@ -73,4 +47,20 @@ void UFirebolt::ActivateEffect()
 	Super::ActivateEffect();
 	auto pc = Cast<ACombatPlayerController>(GetWorld()->GetFirstPlayerController());
 	pc->StartOrientation(this);
+}
+
+void UFirebolt::ProjectEffect(const FVector& pos)
+{
+	m_IsProjecting = true;
+	auto            player{GetPlayer()};
+	EGridDirections direction = DetermineDirection(pos);
+	if(direction == m_ProjectionDirection)
+		return;
+	DisableProjection();
+	m_ProjectionDirection = direction;
+	auto target = GetProjectileTarget(direction, m_MaxTilesTravelled, player->GetGridPosition());
+	if(target == nullptr)
+		return;
+	m_HighlightedCells.Add(target);
+	target->EnableHighlight(true);
 }

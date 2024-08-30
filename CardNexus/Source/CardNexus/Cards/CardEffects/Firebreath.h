@@ -25,7 +25,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void ResolveEffect(const FVector& pos) override;
 	virtual void ActivateEffect() override;
+	virtual void ProjectEffect(const FVector& pos) override;
 private:
-	const int32 m_Damage{-4};
-	void AddNeighbors(EGridDirections direction, TArray<AGridCell*>& effectedCells, AGridCell* currentCell, int maxidx);
+	const int32 m_Damage{4};
 };

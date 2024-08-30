@@ -44,6 +44,7 @@ void ACombatPlayerController::DetectHit()
 				{
 					auto pos = hitResult.ImpactPoint;
 					m_pCurrentlyResolvingCard->ResolveEffect(pos);
+					m_pCurrentlyResolvingCard->DisableProjection();
 					m_IsOrientationMode = false;
 					m_pCurrentlyResolvingCard = nullptr;
 					return;
@@ -59,6 +60,30 @@ void ACombatPlayerController::DetectHit()
 						return;
 					m_pPlayer->SetPath(AGrid::FindPath(m_pPlayer->GetGridPosition(), cell->m_CellCord));
 				}
+			}
+		}
+	}
+}
+
+void ACombatPlayerController::ProjectRange()
+{
+	if(!m_pPlayer->m_IsTurnPlayer)
+		return;
+	FVector worldLocation{};
+	FVector worldDirection{};
+	if(DeprojectMousePositionToWorld(worldLocation, worldDirection))
+	{
+		FVector               start{PlayerCameraManager->GetCameraLocation()};
+		FVector               end{start + worldDirection * 10000.f};
+		FHitResult            hitResult{};
+		FCollisionQueryParams collisionQuery{};
+		collisionQuery.AddIgnoredActor(GetPawn());
+
+		if(GetWorld()->LineTraceSingleByChannel(hitResult, start, end, ECC_Visibility, collisionQuery))
+		{
+			if(hitResult.GetActor())
+			{
+				m_pCurrentlyResolvingCard->ProjectEffect(hitResult.ImpactPoint);
 			}
 		}
 	}
@@ -92,12 +117,21 @@ void ACombatPlayerController::PostInitializeComponents()
 void ACombatPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
+	if(m_IsOrientationMode)
+	{
+		ProjectRange();
+	}
 	if(WasInputKeyJustReleased(EKeys::LeftMouseButton))
 	{
 		DetectHit();
 	}
 	if(WasInputKeyJustReleased(EKeys::RightMouseButton))
 	{
-
+		if(m_IsOrientationMode)
+		{
+			m_IsOrientationMode = false;
+			m_pCurrentlyResolvingCard->DisableProjection();
+			m_pCurrentlyResolvingCard = nullptr;
+		}
 	}
 }

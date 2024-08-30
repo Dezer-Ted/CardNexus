@@ -46,7 +46,13 @@ public:
 	FCellCoord                        m_CellCord{};
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	void EnableHighlight(bool isEnabled);
 	UPROPERTY()
 	AUnitBase* m_CurrentUnit{};
+	UPROPERTY(EditDefaultsOnly)
+	UStaticMeshComponent* m_pCellMesh;
+	UPROPERTY(EditDefaultsOnly)
+	class UMaterial* m_pBaseMat{};
+	UPROPERTY(EditDefaultsOnly)
+	class UMaterial* m_pHighlight{};
 };

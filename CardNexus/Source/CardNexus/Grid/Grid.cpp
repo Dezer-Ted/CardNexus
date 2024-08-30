@@ -138,8 +138,6 @@ std::pair<AGridCell*, FAStarHelper> AGrid::CalculateCost(AGridCell* pCurrentCell
 
 
 	//helper.gCost = pParent->second.gCost + m_MovementCost;
-	UE_LOG(LogTemp, Warning, TEXT("SETTING PARENT CurrentCell X:%d Y:%d ParrentCell X:%d,Y:%d"), pCurrentCell->m_CellCord.X, pCurrentCell->m_CellCord.Y,
-	       pParent->first->m_CellCord.X, pParent->first->m_CellCord.Y);
 	helper.hCost = CalculateHeuristicCost(pParent->first->m_CellCord, end);
 	helper.pParent = &pParent->second;
 	helper.pOwner = pCurrentCell;

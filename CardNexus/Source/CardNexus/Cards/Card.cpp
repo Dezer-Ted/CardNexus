@@ -76,5 +76,9 @@ FCardData ACard::GetCardData() const
 void ACard::ActivateEffect()
 {
 	m_pCardEFfect->ActivateEffect();
+}
+
+void ACard::DiscardThisCard()
+{
 	m_pHand->RemoveCard(this);
 }

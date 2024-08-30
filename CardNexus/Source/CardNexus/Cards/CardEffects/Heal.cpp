@@ -53,4 +53,5 @@ void UHeal::ResolveEffect(const FVector& pos)
 			player->AddHitPoints(m_HealAmount);
 		}
 	}
+	Super::ResolveEffect(pos);
 }

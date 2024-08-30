@@ -27,7 +27,7 @@ void UFirebreath::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+
 }
 
 
@@ -42,82 +42,36 @@ void UFirebreath::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 void UFirebreath::ActivateEffect()
 {
 	Super::ActivateEffect();
-	auto       pc = Cast<ACombatPlayerController>(GetWorld()->GetFirstPlayerController());
+	auto pc = Cast<ACombatPlayerController>(GetWorld()->GetFirstPlayerController());
 	pc->StartOrientation(this);
 }
 
-void UFirebreath::AddNeighbors(EGridDirections direction, TArray<AGridCell*>& effectedCells, AGridCell* currentCell, int maxidx)
+void UFirebreath::ProjectEffect(const FVector& pos)
 {
-	for(int i = 0; i < maxidx; i++)
+	m_IsProjecting = true;
+	auto            player{GetPlayer()};
+	FCellCoord      playerCoord = player->GetGridPosition();
+	EGridDirections direction = DetermineDirection(pos);
+	if(direction == m_ProjectionDirection)
+		return;
+	DisableProjection();
+	m_ProjectionDirection = direction;
+	auto cardData = Cast<ACard>(GetOwner())->GetCardData();
+	m_HighlightedCells = GetConeAffectedCells(playerCoord, cardData.m_Range, direction);
+	for(const auto& cell : m_HighlightedCells)
 	{
-		auto neighbourCell = currentCell->m_NeighborMap[direction];
-		if(neighbourCell)
-		{
-			effectedCells.Add(neighbourCell);
-		}
-		else
-			break;
-
-		currentCell = neighbourCell;
+		if(cell != nullptr)
+			cell->EnableHighlight(true);
 	}
 }
 
 void UFirebreath::ResolveEffect(const FVector& pos)
 {
-	TArray<AActor*> foundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerUnit::StaticClass(), foundActors);
-    
-    if(foundActors.Num() == 0)
-        return;
-    
-    
-	APlayerUnit* player = Cast<APlayerUnit>(foundActors[0]);
-	if (player == nullptr)
-	    return;
-	
-	TArray<AGridCell*> effectedCells;
-	
-	//FCard* card = GetCardData();
-	FCellCoord playerCoord = player->GetGridPosition();
-	AGridCell* playerCell = AGrid::GetCellAtIndex(playerCoord);
-	EGridDirections direction = DetermineDirection(pos);
-	AGridCell* currentCell = playerCell;
-
-	auto cardData = Cast<ACard>(GetOwner())->GetCardData();
-	//Get the first line from the player to the Max Range
-	AddNeighbors(direction, effectedCells, currentCell, cardData.m_Range);
-	
-	// Get the cells on the sides
-	int beforeArrSize = effectedCells.Num();
-	for(int i = 1; i < beforeArrSize; i++)
-	{
-		currentCell = effectedCells[i];
-
-	    if(direction == EGridDirections::NORTH || direction == EGridDirections::SOUTH)
-        {
-	    	//add neighbors West of cell
-	    	AddNeighbors(EGridDirections::WEST, effectedCells, currentCell, i);
-
-	    	//add neighbors East of cell
-	    	AddNeighbors(EGridDirections::EAST, effectedCells, currentCell, i);
-        }
-        else if(direction == EGridDirections::EAST || direction == EGridDirections::WEST)
-        {
-        	//add neighbors North of cell
-        	AddNeighbors(EGridDirections::NORTH, effectedCells, currentCell, i);
-
-        	//add neighbors South of cell
-        	AddNeighbors(EGridDirections::SOUTH, effectedCells, currentCell, i);
-        }
-
-	}
-	
-	//Deal damage to the units in the effected cells
-	for(int i = 0; i < effectedCells.Num(); i++)
-	{
-	    if(effectedCells[i]->m_CurrentUnit)
-	    {
-	        effectedCells[i]->m_CurrentUnit->AddHitPoints(m_Damage);
-	    }
-	}
+	auto               player{GetPlayer()};
+	FCellCoord         playerCoord = player->GetGridPosition();
+	EGridDirections    direction = DetermineDirection(pos);
+	auto               cardData = Cast<ACard>(GetOwner())->GetCardData();
+	TArray<AGridCell*> affectedCells = GetConeAffectedCells(playerCoord, cardData.m_Range, direction);
+	ApplyDamage(affectedCells, m_Damage);
+	Super::ResolveEffect(pos);
 }

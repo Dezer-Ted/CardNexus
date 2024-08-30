@@ -23,6 +23,7 @@ private:
 protected:
 	virtual void BeginPlay() override;
 	void         DetectHit();
+	void         ProjectRange();
 
 	bool m_IsOrientationMode{false};
 	UPROPERTY()
