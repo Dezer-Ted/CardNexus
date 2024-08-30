@@ -48,11 +48,11 @@ EGridDirections UCardEffectLibrary::DetermineDirection(FVector mousePos)
 			UE_LOG(LogTemp, Warning, TEXT("X:%f,Y:%f"), targetPos.X, targetPos.Y);
 			if(FMath::Abs(targetPos.X - 1.0f) < Tolerance && FMath::Abs(targetPos.Y) < Tolerance)
 			{
-				return EGridDirections::SOUTH;
+				return EGridDirections::NORTH;
 			}
 			else if(FMath::Abs(targetPos.X + 1.0f) < Tolerance && FMath::Abs(targetPos.Y) < Tolerance)
 			{
-				return EGridDirections::NORTH;
+				return EGridDirections::SOUTH;
 			}
 			else if(FMath::Abs(targetPos.Y - 1.0f) < Tolerance && FMath::Abs(targetPos.X) < Tolerance)
 			{

@@ -37,7 +37,7 @@ void UFirebolt::ResolveEffect(const FVector& pos)
 {
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerUnit::StaticClass(), FoundActors);
-
+	
 	if(FoundActors.Num() == 0)
 		return;
 
