@@ -22,7 +22,7 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UButton* m_pPlayAgainButton;
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* m_pGameOverText;
+	UTextBlock* m_pGameOverOrWonText;
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* m_pPlayAgainText;
 	UPROPERTY(meta = (BindWidget))
@@ -31,4 +31,5 @@ public:
 	UFUNCTION()
 	void OnQuitClicked();
 	void OnPlayAgainClicked();
+	void gameWon(bool won);
 };
