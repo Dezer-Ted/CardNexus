@@ -37,6 +37,11 @@ void UHaste::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponent
 void UHaste::ActivateEffect()
 {
 	Super::ActivateEffect();
+	ResolveEffect(FVector{});
+}
+
+void UHaste::ResolveEffect(const FVector& pos)
+{
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerUnit::StaticClass(), FoundActors);
 
@@ -49,3 +54,4 @@ void UHaste::ActivateEffect()
 		}
 	}
 }
+

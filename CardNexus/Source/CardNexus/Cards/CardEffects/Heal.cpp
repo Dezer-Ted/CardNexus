@@ -37,6 +37,11 @@ void UHeal::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentT
 void UHeal::ActivateEffect()
 {
 	Super::ActivateEffect();
+	ResolveEffect(FVector{});
+}
+
+void UHeal::ResolveEffect(const FVector& pos)
+{
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerUnit::StaticClass(), FoundActors);
 
@@ -49,4 +54,3 @@ void UHeal::ActivateEffect()
 		}
 	}
 }
-
