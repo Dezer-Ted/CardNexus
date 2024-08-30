@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CardNexus/Grid/GridCell.h"
 #include "Components/ActorComponent.h"
 #include "CardEffectLibrary.generated.h"
 
@@ -19,7 +20,7 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	virtual void DetermineDirection(FVector mousePos);
+	virtual EGridDirections DetermineDirection(FVector mousePos);
 public:	
 	// Called every frame
 	virtual void ActivateEffect();

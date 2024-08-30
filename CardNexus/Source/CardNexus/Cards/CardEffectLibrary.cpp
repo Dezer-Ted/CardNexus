@@ -27,7 +27,7 @@ void UCardEffectLibrary::BeginPlay()
 
 }
 
-void UCardEffectLibrary::DetermineDirection(FVector mousePos)
+EGridDirections UCardEffectLibrary::DetermineDirection(FVector mousePos)
 {
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerUnit::StaticClass(), FoundActors);
@@ -48,23 +48,23 @@ void UCardEffectLibrary::DetermineDirection(FVector mousePos)
 			UE_LOG(LogTemp, Warning, TEXT("X:%f,Y:%f"), targetPos.X, targetPos.Y);
 			if(FMath::Abs(targetPos.X - 1.0f) < Tolerance && FMath::Abs(targetPos.Y) < Tolerance)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("The vector points to the Down"));
+				return EGridDirections::SOUTH;
 			}
 			else if(FMath::Abs(targetPos.X + 1.0f) < Tolerance && FMath::Abs(targetPos.Y) < Tolerance)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("The vector points to the Top"));
+				return EGridDirections::NORTH;
 			}
 			else if(FMath::Abs(targetPos.Y - 1.0f) < Tolerance && FMath::Abs(targetPos.X) < Tolerance)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("The vector points Left"));
+				return EGridDirections::WEST;
 			}
 			else if(FMath::Abs(targetPos.Y + 1.0f) < Tolerance && FMath::Abs(targetPos.X) < Tolerance)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("The vector points Right"));
+				return EGridDirections::EAST;
 			}
-
 		}
 	}
+	return EGridDirections::NORTH;
 }
 
 void UCardEffectLibrary::ActivateEffect()
