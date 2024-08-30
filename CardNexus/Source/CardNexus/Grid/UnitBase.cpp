@@ -30,10 +30,13 @@ void AUnitBase::FollowPath(float dt)
 		if(m_Path.IsEmpty())
 		{
 			m_MoveToPath = false;
+			ReachedDestination();
 			return;
 		}
+
 		m_Target = m_Path[0];
 		m_Path.RemoveAt(0);
+
 		m_TargetPos = m_Target->GetActorLocation();
 		m_StartPos = GetActorLocation();
 	}
@@ -54,6 +57,18 @@ void AUnitBase::EndTurn()
 {
 	m_IsTurnPlayer = false;
 	m_pCombatGM->AdvanceInitiative();
+}
+
+int32 AUnitBase::CheckIfValidPath()
+{
+	for(int i = 0; i < m_Path.Num(); ++i)
+	{
+		if(m_Path[i]->m_CurrentUnit)
+		{
+			return i;
+		}
+	}
+	return -1;
 }
 
 int32 AUnitBase::GetHitPoints() const
@@ -95,6 +110,15 @@ void AUnitBase::SetPath(TArray<AGridCell*> path)
 	if(m_Path.Num() >= m_CurrentMovementSpeed)
 		m_Path.SetNum(m_CurrentMovementSpeed, EAllowShrinking::Yes);
 	m_CurrentMovementSpeed -= m_Path.Num();
+	int32 index(CheckIfValidPath());
+	if(index != -1)
+	{
+		m_Path.SetNum(index,EAllowShrinking::Yes);
+	}
+	
+	if(m_Path.Top()->m_CurrentUnit != nullptr)
+		return;
+
 	m_MoveToPath = true;
 	m_GridPos = m_Path.Top()->m_CellCord;
 	m_Path.Top()->m_CurrentUnit = this;
@@ -108,6 +132,10 @@ FCellCoord AUnitBase::GetGridPosition() const
 void AUnitBase::SetGridPosition(FCellCoord coord)
 {
 	m_GridPos = coord;
+}
+
+void AUnitBase::ReachedDestination()
+{
 }
 
 void AUnitBase::StartTurn()

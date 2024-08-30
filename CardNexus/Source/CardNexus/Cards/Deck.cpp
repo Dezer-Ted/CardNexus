@@ -78,6 +78,8 @@ ACard* ADeck::DrawCard()
 {
 	if(m_DeckList.Num() == 0)
 		ShuffleDiscardIntoDeck();
+	if(m_DeckList.Num() == 0)
+		return nullptr;
 	return m_DeckList.Pop(EAllowShrinking::No);
 }
 

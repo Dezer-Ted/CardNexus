@@ -42,7 +42,7 @@ protected:
 	int32 m_HitPoints{};
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 m_MaxHitPoints{30};
-
+	int32 CheckIfValidPath();
 public:
 	// Called every frame
 	UPROPERTY()
@@ -60,6 +60,7 @@ public:
 	virtual void       SetPath(TArray<AGridCell*> path);
 	virtual FCellCoord GetGridPosition() const;
 	virtual void       SetGridPosition(FCellCoord coord);
+	virtual void       ReachedDestination();
 	UFUNCTION(BlueprintCallable)
 	virtual void StartTurn();
 

@@ -21,6 +21,11 @@ struct FCellCoord {
 	GENERATED_BODY()
 	int32 X;
 	int32 Y;
+
+	bool operator==(const FCellCoord& other) const
+	{
+		return X == other.X && Y == other.Y;
+	}
 };
 
 UCLASS()

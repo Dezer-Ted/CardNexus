@@ -85,7 +85,9 @@ void APlayerHand::Tick(float DeltaTime)
 
 void APlayerHand::DrawCard()
 {
-	auto                      card{m_pDeck->DrawCard()};
+	auto card{m_pDeck->DrawCard()};
+	if(card == nullptr)
+		return;
 	FAttachmentTransformRules atRules{FAttachmentTransformRules::SnapToTargetNotIncludingScale};
 	card->AttachToActor(this, atRules,TEXT("Cards"));
 	m_HandCards.Add(card);

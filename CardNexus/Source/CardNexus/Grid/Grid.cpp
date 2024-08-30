@@ -28,8 +28,6 @@ void AGrid::BeginPlay()
 void AGrid::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-
 	for(int i = 0; i < m_Grid.Num(); ++i)
 	{
 		for(int j = 0; j < m_Grid[i].Num(); ++j)
@@ -183,7 +181,7 @@ TArray<AGridCell*> AGrid::FindPath(const FCellCoord& start, const FCellCoord& en
 		}
 		if(current->first == GetCellAtIndex(end))
 		{
-			break;
+ 			break;
 		}
 		closedList.push_back(current);
 		openList.remove(current);
@@ -193,7 +191,8 @@ TArray<AGridCell*> AGrid::FindPath(const FCellCoord& start, const FCellCoord& en
 				continue;
 			if(FindNode(closedList, neighbor.Value) || neighbor.Value->m_CurrentUnit != nullptr)
 			{
-				continue;
+				if(neighbor.Value->m_CellCord != end)
+					continue;
 			}
 			int32 gCost = current->second.gCost + m_MovementCost;
 			auto  pSuccessor = FindNode(openList, neighbor.Value);
