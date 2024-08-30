@@ -92,25 +92,24 @@ void UFirebreath::ResolveEffect(const FVector& pos)
 	for(int i = 1; i < beforeArrSize; i++)
 	{
 		currentCell = effectedCells[i];
-	    for(int j = 0; j < i; j++)
-	    {
-	        if(direction == EGridDirections::NORTH || direction == EGridDirections::SOUTH)
-            {
-	        	//add neighbors West of cell
-	        	AddNeighbors(EGridDirections::WEST, effectedCells, currentCell, i);
 
-	        	//add neigbors East of cell
-	        	AddNeighbors(EGridDirections::EAST, effectedCells, currentCell, i);
-            }
-            else
-            {
-            	//add neighbors North of cell
-            	AddNeighbors(EGridDirections::NORTH, effectedCells, currentCell, i);
+	    if(direction == EGridDirections::NORTH || direction == EGridDirections::SOUTH)
+        {
+	    	//add neighbors West of cell
+	    	AddNeighbors(EGridDirections::WEST, effectedCells, currentCell, i);
 
-            	//add neigbors South of cell
-            	AddNeighbors(EGridDirections::SOUTH, effectedCells, currentCell, i);
-            }
-	    }
+	    	//add neighbors East of cell
+	    	AddNeighbors(EGridDirections::EAST, effectedCells, currentCell, i);
+        }
+        else if(direction == EGridDirections::EAST || direction == EGridDirections::WEST)
+        {
+        	//add neighbors North of cell
+        	AddNeighbors(EGridDirections::NORTH, effectedCells, currentCell, i);
+
+        	//add neighbors South of cell
+        	AddNeighbors(EGridDirections::SOUTH, effectedCells, currentCell, i);
+        }
+
 	}
 	
 	//Deal damage to the units in the effected cells
