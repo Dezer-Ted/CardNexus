@@ -24,6 +24,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void ResolveEffect(const FVector& pos) override;
 	virtual void ActivateEffect() override;
 	
 private:

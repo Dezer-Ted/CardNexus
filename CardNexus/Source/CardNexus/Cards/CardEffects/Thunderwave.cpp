@@ -3,6 +3,7 @@
 
 #include "CardNexus/Cards/CardEffects/Thunderwave.h"
 
+#include "CardNexus/Combat/CombatPlayerController.h"
 #include "CardNexus/Grid/Grid.h"
 #include "Kismet/GameplayStatics.h"
 #include "CardNexus/Grid/PlayerUnit.h"
@@ -23,7 +24,6 @@ UThunderwave::UThunderwave()
 void UThunderwave::BeginPlay()
 {
 	Super::BeginPlay();
-
 	// ...
 	
 }
@@ -40,45 +40,61 @@ void UThunderwave::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 void UThunderwave::ActivateEffect()
 {
 	Super::ActivateEffect();
-	TArray<AActor*> FoundActors;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerUnit::StaticClass(), FoundActors);
-    
-    if (FoundActors.Num() > 0)
-    {
-    	APlayerUnit* player = Cast<APlayerUnit>(FoundActors[0]);
-    	if (player)
-    	{
-    		TArray<AGridCell*> SurroundingCells;
-    		
-    		//Get Surrounding player cells
-    		FCellCoord playerCoord = player->GetGridPosition();
-    		AGridCell* playerCell = AGrid::GetCellAtIndex(playerCoord);
-    		SurroundingCells.Emplace(playerCell->m_NeighborMap[EGridDirections::NORTH]);
-    		SurroundingCells.Emplace(playerCell->m_NeighborMap[EGridDirections::NORTH]->m_NeighborMap[EGridDirections::EAST]);
-    		SurroundingCells.Emplace(playerCell->m_NeighborMap[EGridDirections::EAST]);
-    		SurroundingCells.Emplace(playerCell->m_NeighborMap[EGridDirections::EAST]->m_NeighborMap[EGridDirections::SOUTH]);
-    		SurroundingCells.Emplace(playerCell->m_NeighborMap[EGridDirections::SOUTH]);
-    		SurroundingCells.Emplace(playerCell->m_NeighborMap[EGridDirections::SOUTH]->m_NeighborMap[EGridDirections::WEST]);
-    		SurroundingCells.Emplace(playerCell->m_NeighborMap[EGridDirections::WEST]);
-    		SurroundingCells.Emplace(playerCell->m_NeighborMap[EGridDirections::WEST]->m_NeighborMap[EGridDirections::NORTH]);
-    		
-    		//Do Damage to surrounding player cells if there is a unit
-    		if(SurroundingCells.Num() > 0)
-    		{
-    		    for(int i = 0; i < SurroundingCells.Num(); i++)
-    		    {
-    		    	if(SurroundingCells[i] != nullptr)
-    		    	{
-    		    		AUnitBase* unit;
-    		    		unit = SurroundingCells[i]->m_CurrentUnit;
-    		    		if(unit)
-    		    		{
-    		    			unit->AddHitPoints(m_Damage);
-    		    		}
-    		    	}
-    		    }
-    		}
-    	}
-    }
+	auto       pc = Cast<ACombatPlayerController>(GetWorld()->GetFirstPlayerController());
+	pc->StartOrientation(this);
 }
 
+void UThunderwave::ResolveEffect(const FVector& pos)
+{
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerUnit::StaticClass(), FoundActors);
+    
+	if (FoundActors.Num() == 0)
+		return;
+    
+	APlayerUnit* player = Cast<APlayerUnit>(FoundActors[0]);
+	if (player == nullptr)
+		return;
+	
+    
+	TArray<AGridCell*> SurroundingCells;
+    
+	//Get Surrounding player cells
+	FCellCoord playerCoord = player->GetGridPosition();
+	AGridCell* playerCell = AGrid::GetCellAtIndex(playerCoord);
+	SurroundingCells.Emplace(playerCell->m_NeighborMap[EGridDirections::NORTH]);
+	SurroundingCells.Emplace(playerCell->m_NeighborMap[EGridDirections::EAST]);
+	SurroundingCells.Emplace(playerCell->m_NeighborMap[EGridDirections::SOUTH]);
+	SurroundingCells.Emplace(playerCell->m_NeighborMap[EGridDirections::WEST]);
+
+	if(SurroundingCells[0] != nullptr && SurroundingCells[1] != nullptr)
+	{
+		SurroundingCells.Emplace(SurroundingCells[0]->m_NeighborMap[EGridDirections::EAST]);
+	}
+	if(SurroundingCells[1] != nullptr && SurroundingCells[2] != nullptr)
+	{
+		SurroundingCells.Emplace(SurroundingCells[1]->m_NeighborMap[EGridDirections::SOUTH]);
+	}
+	if(SurroundingCells[2] != nullptr && SurroundingCells[3] != nullptr)
+	{
+		SurroundingCells.Emplace(SurroundingCells[2]->m_NeighborMap[EGridDirections::WEST]);
+	}
+	if(SurroundingCells[3] != nullptr && SurroundingCells[0] != nullptr)
+	{
+		SurroundingCells.Emplace(SurroundingCells[3]->m_NeighborMap[EGridDirections::NORTH]);
+	}
+	
+	//Do Damage to surrounding player cells if there is a unit
+	for(int i = 0; i < SurroundingCells.Num(); i++)
+	{
+		if(SurroundingCells[i] != nullptr)
+		{
+			AUnitBase* unit;
+			unit = SurroundingCells[i]->m_CurrentUnit;
+			if(unit)
+			{
+				unit->AddHitPoints(m_Damage);
+			}
+		}
+	}
+}
