@@ -27,4 +27,5 @@ public:
 	virtual void ActivateEffect() override;
 private:
 	const int32 m_Damage{-4};
+	void AddNeighbors(EGridDirections direction, TArray<AGridCell*>& effectedCells, AGridCell* currentCell, int maxidx);
 };

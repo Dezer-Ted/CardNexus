@@ -44,56 +44,76 @@ void UFirebreath::ActivateEffect()
 	pc->StartOrientation(this);
 }
 
+void UFirebreath::AddNeighbors(EGridDirections direction, TArray<AGridCell*>& effectedCells, AGridCell* currentCell, int maxidx)
+{
+	for(int i = 0; i < maxidx; i++)
+	{
+		auto neighbourCell = currentCell->m_NeighborMap[direction];
+		if(neighbourCell)
+		{
+			effectedCells.Add(neighbourCell);
+		}
+		else
+			break;
+	}
+}
+
 void UFirebreath::ResolveEffect(const FVector& pos)
 {
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerUnit::StaticClass(), FoundActors);
+	TArray<AActor*> foundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerUnit::StaticClass(), foundActors);
     
-	if (FoundActors.Num() > 0)
+    if(foundActors.Num() == 0)
+        return;
+    
+    
+	APlayerUnit* player = Cast<APlayerUnit>(foundActors[0]);
+	if (player == nullptr)
+	    return;
+	
+	TArray<AGridCell*> effectedCells;
+	
+	//FCard* card = GetCardData();
+	FCellCoord playerCoord = player->GetGridPosition();
+	AGridCell* playerCell = AGrid::GetCellAtIndex(playerCoord);
+	EGridDirections direction = DetermineDirection(pos);
+	AGridCell* currentCell = playerCell;
+	
+	//Get the first line from the player to the Max Range
+	AddNeighbors(direction, effectedCells, currentCell, 2);
+	
+	// Get the cells on the sides
+	int beforeArrSize = effectedCells.Num();
+	for(int i = 1; i < beforeArrSize; i++)
 	{
-		APlayerUnit* player = Cast<APlayerUnit>(FoundActors[0]);
-		if (player)
-		{
-			FCellCoord playerCoord = player->GetGridPosition();
-			AGridCell* playerCell = AGrid::GetCellAtIndex(playerCoord);
-			EGridDirections direction = DetermineDirection(pos);
-			AGridCell* currentCell = playerCell;
-			AGridCell* nextCell = playerCell->m_NeighborMap[direction];
-			if(nextCell != nullptr)
-			{
-				nextCell->m_CurrentUnit->AddHitPoints(m_Damage);
-				AGridCell* midTCell = nextCell->m_NeighborMap[direction];
-				if(midTCell != nullptr)
-				{
-					midTCell->m_CurrentUnit->AddHitPoints(m_Damage);
-					if(direction == EGridDirections::NORTH || direction == EGridDirections::SOUTH)
-					{
-						AGridCell* leftTCell = midTCell->m_NeighborMap[EGridDirections::WEST];
-						if(leftTCell != nullptr)
-						{
-							leftTCell->m_CurrentUnit->AddHitPoints(m_Damage);
-						}
-						AGridCell* rightTCell = midTCell->m_NeighborMap[EGridDirections::EAST];
-						if(rightTCell != nullptr)
-						{
-							rightTCell->m_CurrentUnit->AddHitPoints(m_Damage);
-						}
-					}
-					else if(direction == EGridDirections::EAST || direction == EGridDirections::WEST)
-					{
-						AGridCell* upTCell = midTCell->m_NeighborMap[EGridDirections::NORTH];
-						if(upTCell != nullptr)
-						{
-							upTCell->m_CurrentUnit->AddHitPoints(m_Damage);
-						}
-						AGridCell* downTCell = midTCell->m_NeighborMap[EGridDirections::SOUTH];
-						if(upTCell != nullptr)
-						{
-							downTCell->m_CurrentUnit->AddHitPoints(m_Damage);
-						}
-					}
-				}
-			}
-		}
+		currentCell = effectedCells[i];
+	    for(int j = 0; j < i; j++)
+	    {
+	        if(direction == EGridDirections::NORTH || direction == EGridDirections::SOUTH)
+            {
+	        	//add neighbors West of cell
+	        	AddNeighbors(EGridDirections::WEST, effectedCells, currentCell, j);
+
+	        	//add neigbors East of cell
+	        	AddNeighbors(EGridDirections::EAST, effectedCells, currentCell, j);
+            }
+            else
+            {
+            	//add neighbors North of cell
+            	AddNeighbors(EGridDirections::NORTH, effectedCells, currentCell, j);
+
+            	//add neigbors South of cell
+            	AddNeighbors(EGridDirections::SOUTH, effectedCells, currentCell, j);
+            }
+	    }
+	}
+	
+	//Deal damage to the units in the effected cells
+	for(int i = 0; i < effectedCells.Num(); i++)
+	{
+	    if(effectedCells[i]->m_CurrentUnit)
+	    {
+	        effectedCells[i]->m_CurrentUnit->AddHitPoints(m_Damage);
+	    }
 	}
 }
