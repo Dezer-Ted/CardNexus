@@ -6,6 +6,8 @@
 #include "Grid.h"
 #include "GridCell.h"
 #include "CardNexus/Combat/CombatGM.h"
+#include "CardNexus/Combat/HUD/FloatingHealth.h"
+#include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -13,7 +15,9 @@ AUnitBase::AUnitBase()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("root"));
+	m_pHpBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
+	m_pHpBarWidget->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -21,6 +25,7 @@ void AUnitBase::BeginPlay()
 {
 	Super::BeginPlay();
 	m_HitPoints = m_MaxHitPoints;
+	AddHitPoints(0);
 }
 
 void AUnitBase::FollowPath(float dt)
@@ -85,6 +90,7 @@ void AUnitBase::AddHitPoints(int32 hpDelta)
 	{
 		DeathEvent.Broadcast();
 	}
+	Cast<UFloatingHealth>(m_pHpBarWidget->GetWidget())->SetHealth(m_HitPoints, m_MaxHitPoints);
 
 }
 
@@ -113,9 +119,9 @@ void AUnitBase::SetPath(TArray<AGridCell*> path)
 	int32 index(CheckIfValidPath());
 	if(index != -1)
 	{
-		m_Path.SetNum(index,EAllowShrinking::Yes);
+		m_Path.SetNum(index, EAllowShrinking::Yes);
 	}
-	
+
 	if(m_Path.Top()->m_CurrentUnit != nullptr)
 		return;
 

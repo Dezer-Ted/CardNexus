@@ -9,6 +9,7 @@
 #include "CardNexus/Grid/GridCell.h"
 #include "UnitBase.generated.h"
 
+class UFloatingHealth;
 class ACombatGM;
 class AGridCell;
 
@@ -43,6 +44,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 m_MaxHitPoints{30};
 	int32 CheckIfValidPath();
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UFloatingHealth> m_FloatingHealthBP;
+	UPROPERTY()
+	UFloatingHealth* m_pFloatingHealth;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UWidgetComponent* m_pHpBarWidget;
+
 public:
 	// Called every frame
 	UPROPERTY()

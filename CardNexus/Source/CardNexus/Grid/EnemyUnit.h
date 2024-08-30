@@ -6,6 +6,7 @@
 #include "CardNexus/Grid/UnitBase.h"
 #include "EnemyUnit.generated.h"
 
+class UWidgetComponent;
 class APlayerUnit;
 /**
  * 
@@ -25,4 +26,5 @@ class CARDNEXUS_API AEnemyUnit : public AUnitBase {
 	APlayerUnit* m_pTarget;
 	UPROPERTY(EditDefaultsOnly)
 	int32 m_Damage{5};
+
 };
