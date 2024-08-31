@@ -28,6 +28,14 @@ struct FCellCoord {
 	}
 };
 
+UENUM()
+enum class ETileHighLightingMode {
+	Base UMETA(DisplayName="Base"),
+	AbilityHighlight UMETA(DisplayName="AbilityHighlight"),
+	PathInRange UMETA(DisplayName="PathInRange"),
+	PathOutOfRange UMETA(DisplayName="PathOutOfRange")
+};
+
 UCLASS()
 class CARDNEXUS_API AGridCell : public AActor {
 	GENERATED_BODY()
@@ -46,7 +54,7 @@ public:
 	FCellCoord                        m_CellCord{};
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	void EnableHighlight(bool isEnabled);
+	void         EnableHighlight(const ETileHighLightingMode& mode);
 	UPROPERTY()
 	AUnitBase* m_CurrentUnit{};
 	UPROPERTY(EditDefaultsOnly)
@@ -55,4 +63,8 @@ public:
 	class UMaterial* m_pBaseMat{};
 	UPROPERTY(EditDefaultsOnly)
 	class UMaterial* m_pHighlight{};
+	UPROPERTY(EditDefaultsOnly)
+	class UMaterial* m_pPathInRangeMat{};
+	UPROPERTY(EditDefaultsOnly)
+	class UMaterial* m_pPathOutOfRangeMat{};
 };

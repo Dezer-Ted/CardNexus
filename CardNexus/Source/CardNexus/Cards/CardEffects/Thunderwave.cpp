@@ -56,7 +56,7 @@ void UThunderwave::ProjectEffect(const FVector& pos)
 	for(const auto& cell : m_HighlightedCells)
 	{
 		if(cell != nullptr)
-			cell->EnableHighlight(true);
+			cell->EnableHighlight(ETileHighLightingMode::AbilityHighlight);
 	}
 }
 

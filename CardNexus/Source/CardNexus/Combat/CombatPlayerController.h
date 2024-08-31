@@ -24,10 +24,15 @@ protected:
 	virtual void BeginPlay() override;
 	void         DetectHit();
 	void         ProjectRange();
+	void         ProjectPath();
 
 	bool m_IsOrientationMode{false};
 	UPROPERTY()
 	class UCardEffectLibrary* m_pCurrentlyResolvingCard{nullptr};
+	UPROPERTY()
+	TArray<AGridCell*> m_HighlightedPath;
+	FCellCoord         m_PathDestination;
+	void               DisablePathProjection();
 
 public:
 	void         StartOrientation(UCardEffectLibrary* card);

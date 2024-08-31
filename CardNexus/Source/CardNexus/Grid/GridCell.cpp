@@ -27,14 +27,22 @@ void AGridCell::Tick(float DeltaTime)
 
 }
 
-void AGridCell::EnableHighlight(bool isEnabled)
+void AGridCell::EnableHighlight(const ETileHighLightingMode& mode)
 {
-	if(isEnabled)
+	switch(mode)
 	{
-		m_pCellMesh->SetMaterial(0, m_pHighlight);
-	}
-	else
-	{
+	case ETileHighLightingMode::Base:
 		m_pCellMesh->SetMaterial(0, m_pBaseMat);
+		break;
+	case ETileHighLightingMode::AbilityHighlight:
+		m_pCellMesh->SetMaterial(0, m_pHighlight);
+		break;
+	case ETileHighLightingMode::PathInRange:
+		m_pCellMesh->SetMaterial(0, m_pPathInRangeMat);
+		break;
+	case ETileHighLightingMode::PathOutOfRange:
+		m_pCellMesh->SetMaterial(0, m_pPathOutOfRangeMat);
+		break;
 	}
+
 }

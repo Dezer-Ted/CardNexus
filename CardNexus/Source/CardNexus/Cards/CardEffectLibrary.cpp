@@ -206,7 +206,7 @@ void UCardEffectLibrary::DisableProjection()
 	for(const auto& cell : m_HighlightedCells)
 	{
 		if(cell != nullptr)
-			cell->EnableHighlight(false);
+			cell->EnableHighlight(ETileHighLightingMode::Base);
 	}
 	m_HighlightedCells.SetNum(0);
 }

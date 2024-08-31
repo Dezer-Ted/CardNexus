@@ -62,5 +62,5 @@ void UFirebolt::ProjectEffect(const FVector& pos)
 	if(target == nullptr)
 		return;
 	m_HighlightedCells.Add(target);
-	target->EnableHighlight(true);
+	target->EnableHighlight(ETileHighLightingMode::AbilityHighlight);
 }

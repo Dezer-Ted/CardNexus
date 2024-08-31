@@ -89,19 +89,66 @@ void ACombatPlayerController::ProjectRange()
 	}
 }
 
+void ACombatPlayerController::ProjectPath()
+{
+	if(!m_pPlayer->m_IsTurnPlayer)
+		return;
+	FVector worldLocation{};
+	FVector worldDirection{};
+	if(DeprojectMousePositionToWorld(worldLocation, worldDirection))
+	{
+		FVector               start{PlayerCameraManager->GetCameraLocation()};
+		FVector               end{start + worldDirection * 10000.f};
+		FHitResult            hitResult{};
+		FCollisionQueryParams collisionQuery{};
+		collisionQuery.AddIgnoredActor(GetPawn());
+
+		if(GetWorld()->LineTraceSingleByChannel(hitResult, start, end, ECC_Visibility, collisionQuery))
+		{
+			if(hitResult.GetActor())
+			{
+				auto destinationCell = Cast<AGridCell>(hitResult.GetActor());
+				if(destinationCell)
+				{
+					if(m_PathDestination == destinationCell->m_CellCord)
+						return;
+					DisablePathProjection();
+					m_PathDestination = destinationCell->m_CellCord;
+					m_HighlightedPath = AGrid::FindPath(m_pPlayer->GetGridPosition(), destinationCell->m_CellCord);
+					for(int i = 0; i < m_HighlightedPath.Num(); ++i)
+					{
+						if(m_HighlightedPath.Num() - i <= m_pPlayer->m_CurrentMovementSpeed)
+						{
+							m_HighlightedPath[i]->EnableHighlight(ETileHighLightingMode::PathInRange);
+						}
+						else
+						{
+							m_HighlightedPath[i]->EnableHighlight(ETileHighLightingMode::PathOutOfRange);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void ACombatPlayerController::DisablePathProjection()
+{
+	for(const auto& cell : m_HighlightedPath)
+	{
+		cell->EnableHighlight(ETileHighLightingMode::Base);
+	}
+}
+
 void ACombatPlayerController::StartOrientation(UCardEffectLibrary* card)
 {
 	m_IsOrientationMode = true;
 	m_pCurrentlyResolvingCard = card;
+	DisablePathProjection();
 }
 
 void ACombatPlayerController::AddUnitsToInitList(const TArray<UInitViewEntry*>& units)
 {
-	/*for(const auto& unit : units)
-	{
-		auto entry{Cast<UInitCard>(CreateWidget(m_InitList->m_pList, m_InitCardBP))};
-		m_InitList->m_pList->AddItem(entry);
-	}*/
 	m_InitList->m_pList->SetListItems(units);
 }
 
@@ -117,9 +164,18 @@ void ACombatPlayerController::PostInitializeComponents()
 void ACombatPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
+	if(!m_pPlayer->m_IsTurnPlayer)
+	{
+		DisablePathProjection();
+		return;
+	}
 	if(m_IsOrientationMode)
 	{
 		ProjectRange();
+	}
+	else
+	{
+		ProjectPath();
 	}
 	if(WasInputKeyJustReleased(EKeys::LeftMouseButton))
 	{
