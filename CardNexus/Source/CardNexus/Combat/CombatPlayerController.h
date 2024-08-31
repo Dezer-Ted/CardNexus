@@ -33,6 +33,10 @@ protected:
 	TArray<AGridCell*> m_HighlightedPath;
 	FCellCoord         m_PathDestination;
 	void               DisablePathProjection();
+	UPROPERTY()
+	class ACard* m_pHighlightedCard;
+	UPROPERTY()
+	class APlayerHand* m_pPlayerHand;
 
 public:
 	void         StartOrientation(UCardEffectLibrary* card);

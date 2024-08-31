@@ -17,21 +17,24 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	const int32 m_CardWidth{225};
-	const int32 m_DistanceBetweenCards{25};
+	const int32 m_DistanceBetweenCards{-50};
+	const int32 m_RotationStep{5};
+	const int32 m_MaxHandSize{10};
 
 	virtual void         BeginPlay() override;
 	TArray<class ACard*> m_HandCards{};
 	UPROPERTY()
-	class ADeck*         m_pDeck{nullptr};
+	class ADeck* m_pDeck{nullptr};
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<AActor> deckType{};
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<class USceneComponent> m_pSceneComp{};
-	void                              ConstructHand();
-	virtual void PostInitializeComponents() override;
+	virtual void                      PostInitializeComponents() override;
+
 public:
 	// Called every frame
+	void         ConstructHand();
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION(BlueprintCallable)
 	void DrawCard();

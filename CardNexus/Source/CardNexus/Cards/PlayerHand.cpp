@@ -48,9 +48,25 @@ void APlayerHand::ConstructHand()
 	for(int32 i = -(m_HandCards.Num() / 2); i < m_HandCards.Num() / 2 + 1; ++i)
 	{
 		if(i == 0)
-			++i;
+		{
+			if(m_HandCards.Num() % 2 == 0)
+			{
+				++i;
+			}
+			else
+			{
+				m_HandCards[counter]->SetActorRelativeRotation(FRotator{0, 0, 0});
+				FVector splitOffSet{m_HandCards[counter]->GetActorLocation()};
+				FVector testValue{this->GetActorTransform().InverseTransformPosition(splitOffSet)};
+				testValue.X = counter * -10;
+				m_HandCards[counter]->SetActorRelativeLocation(testValue);
+				counter++;
+				continue;
+			}
+		}
 		FVector currentPos{m_HandCards[counter]->GetActorLocation()};
 		int32   offSet{(m_CardWidth + m_DistanceBetweenCards) * i};
+		int32   rotation{m_RotationStep * i};
 		if(m_HandCards.Num() % 2 == 0)
 		{
 			if(offSet > 0)
@@ -64,6 +80,15 @@ void APlayerHand::ConstructHand()
 		}
 		currentPos.Y += offSet;
 		m_HandCards[counter]->SetActorLocation(currentPos);
+
+
+		FVector splitOffSet{m_HandCards[counter]->GetActorLocation()};
+		FVector testValue{this->GetActorTransform().InverseTransformPosition(splitOffSet)};
+		testValue += FVector{0, 0, static_cast<double>(abs(FMath::Pow(i, 2.f))) * -10};
+		testValue.X = counter * -10;
+		m_HandCards[counter]->SetActorRelativeLocation(testValue);
+		m_HandCards[counter]->SetActorRelativeRotation(FRotator{0, 0, 0});
+		m_HandCards[counter]->SetActorRelativeRotation(FRotator{0, 0, static_cast<double>(rotation)});
 		++counter;
 	}
 
@@ -85,6 +110,8 @@ void APlayerHand::Tick(float DeltaTime)
 
 void APlayerHand::DrawCard()
 {
+	if(m_HandCards.Num() >= m_MaxHandSize)
+		return;
 	auto card{m_pDeck->DrawCard()};
 	if(card == nullptr)
 		return;

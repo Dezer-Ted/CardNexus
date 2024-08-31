@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "CardNexus/Cards/Card.h"
 #include "CardNexus/Cards/CardEffectLibrary.h"
+#include "CardNexus/Cards/PlayerHand.h"
 #include "CardNexus/Grid/Grid.h"
 #include "CardNexus/Combat/Initiative/InitiativeList.h"
 #include "CardNexus/Combat/Initiative/InitCard.h"
@@ -20,6 +21,7 @@ void ACombatPlayerController::BeginPlay()
 	bShowMouseCursor = true;
 	bEnableClickEvents = true;
 	bEnableMouseOverEvents = true;
+	m_pPlayerHand = Cast<APlayerHand>(UGameplayStatics::GetActorOfClass(GetWorld(), APlayerHand::StaticClass()));
 }
 
 void ACombatPlayerController::DetectHit()
@@ -51,7 +53,10 @@ void ACombatPlayerController::DetectHit()
 				}
 				auto card{Cast<ACard>(hitResult.GetActor())};
 				if(card)
+				{
+					m_pPlayerHand->ConstructHand();
 					card->ActivateEffect();
+				}
 
 				auto cell{Cast<AGridCell>(hitResult.GetActor())};
 				if(cell)
@@ -127,10 +132,33 @@ void ACombatPlayerController::ProjectPath()
 						}
 					}
 				}
+				else
+				{
+					DisablePathProjection();
+				}
+				auto card{Cast<ACard>(hitResult.GetActor())};
+				if(card)
+				{
+					if(m_pHighlightedCard == card)
+						return;
+					m_pPlayerHand->ConstructHand();
+					m_pHighlightedCard = card;
+					FVector splitOffSet{card->GetActorLocation()};
+					FVector localPosition{m_pPlayerHand->GetTransform().InverseTransformPosition(splitOffSet)};
+					localPosition.Z += 200;
+					localPosition.X = 0;
+					m_pHighlightedCard->SetActorRelativeLocation(localPosition);
+					m_pHighlightedCard->SetActorRelativeRotation({0, 0, 0});
+				}
+				else
+				{
+					m_pPlayerHand->ConstructHand();
+				}
 			}
 		}
 	}
 }
+
 
 void ACombatPlayerController::DisablePathProjection()
 {
