@@ -29,5 +29,8 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UActorComponent> m_HandBlueprint;
 	void                         DrawCard();
-
+	void                         MoveCamera(float num);
+private:
+	FVector m_OriginalLocation;
+	const float m_speed = 1200.0f;
 };

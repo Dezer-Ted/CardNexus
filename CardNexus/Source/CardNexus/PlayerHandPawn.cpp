@@ -5,6 +5,9 @@
 #include "Camera/CameraComponent.h"
 #include "Cards/PlayerHand.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Grid/Grid.h"
+#include "Grid/PlayerUnit.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APlayerHandPawn::APlayerHandPawn()
@@ -20,7 +23,7 @@ void APlayerHandPawn::BeginPlay()
 	Super::BeginPlay();
 	auto pChildActor {Cast<UChildActorComponent>(this->GetComponentByClass(m_HandBlueprint))};
 	m_pHand = Cast<APlayerHand>(pChildActor->GetChildActor());
-	
+	m_OriginalLocation = GetActorLocation();
 }
 
 // Called every frame
@@ -35,9 +38,22 @@ void APlayerHandPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	InputComponent->BindAction("DebugDraw",IE_Pressed,this,&APlayerHandPawn::DrawCard);
+	InputComponent->BindAxis("CameraMovement",this,&APlayerHandPawn::MoveCamera);
 }
 
 void APlayerHandPawn::DrawCard()
 {
 	m_pHand->DrawCard();
+}
+
+void APlayerHandPawn::MoveCamera(float num)
+{
+	if(num == 0.0f)
+		return;
+
+	//BP_HandPawn has a camera
+	FVector nextLocation = GetActorLocation();
+	nextLocation += FVector( 0.0f,num * m_speed * GetWorld()->GetDeltaSeconds(),  0.0f);
+	if(nextLocation.Y >  m_OriginalLocation.Y - 1000.0f && nextLocation.Y < m_OriginalLocation.Y + 1000.0f)
+		SetActorLocation(nextLocation);
 }
