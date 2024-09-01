@@ -38,7 +38,8 @@ void APlayerHandPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	InputComponent->BindAction("DebugDraw",IE_Pressed,this,&APlayerHandPawn::DrawCard);
-	InputComponent->BindAxis("CameraMovement",this,&APlayerHandPawn::MoveCamera);
+	InputComponent->BindAxis("CameraMovementY",this,&APlayerHandPawn::MoveCameraYaxis);
+	InputComponent->BindAxis("CameraMovementX",this,&APlayerHandPawn::MoveCameraXaxis);
 }
 
 void APlayerHandPawn::DrawCard()
@@ -46,7 +47,7 @@ void APlayerHandPawn::DrawCard()
 	m_pHand->DrawCard();
 }
 
-void APlayerHandPawn::MoveCamera(float num)
+void APlayerHandPawn::MoveCameraYaxis(float num)
 {
 	if(num == 0.0f)
 		return;
@@ -55,5 +56,17 @@ void APlayerHandPawn::MoveCamera(float num)
 	FVector nextLocation = GetActorLocation();
 	nextLocation += FVector( 0.0f,num * m_speed * GetWorld()->GetDeltaSeconds(),  0.0f);
 	if(nextLocation.Y >  m_OriginalLocation.Y - 1000.0f && nextLocation.Y < m_OriginalLocation.Y + 1000.0f)
+		SetActorLocation(nextLocation);
+}
+
+void APlayerHandPawn::MoveCameraXaxis(float num)
+{
+	if(num == 0.0f)
+		return;
+
+	//BP_HandPawn has a camera
+	FVector nextLocation = GetActorLocation();
+	nextLocation += FVector(num * m_speed * GetWorld()->GetDeltaSeconds(),  0.0f, 0.0f);
+	if(nextLocation.X >  m_OriginalLocation.X - 1000.0f && nextLocation.X < m_OriginalLocation.X + 400.0f)
 		SetActorLocation(nextLocation);
 }
