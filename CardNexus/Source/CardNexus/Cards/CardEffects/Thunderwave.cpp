@@ -3,6 +3,9 @@
 
 #include "CardNexus/Cards/CardEffects/Thunderwave.h"
 
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+#include "CardNexus/Cards/Card.h"
 #include "CardNexus/Combat/CombatPlayerController.h"
 #include "CardNexus/Grid/Grid.h"
 #include "Kismet/GameplayStatics.h"
@@ -65,6 +68,11 @@ void UThunderwave::ResolveEffect(const FVector& pos)
 	auto               player = GetPlayer();
 	FCellCoord         playerCoord = player->GetGridPosition();
 	TArray<AGridCell*> SurroundingCells = GetSurroundingCells(playerCoord);
+	auto               lightningWave = Cast<ACard>(GetOwner())->m_pThunderWave;
+	auto               comp = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), lightningWave, player->GetActorLocation(), FRotator{},
+	                                                           FVector{1},
+	                                                           true, true, ENCPoolMethod::None, true);
+	comp->SetFloatParameter(TEXT("ElectricitySize"), 600);
 	ApplyDamage(SurroundingCells, m_Damage);
 	Super::ResolveEffect(pos);
 }
