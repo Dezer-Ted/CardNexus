@@ -125,7 +125,7 @@ void APlayerHand::RemoveCard(ACard* card)
 {
 	auto idx{m_HandCards.Find(card)};
 	m_pDeck->DiscardCard(card);
-	card->SetActorLocation(FVector{0, 0, -100});
+	card->SetActorLocation(FVector{0, 0, 10000});
 	m_HandCards.RemoveAt(idx);
 	ConstructHand();
 }

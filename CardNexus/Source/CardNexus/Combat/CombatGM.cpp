@@ -99,7 +99,7 @@ void ACombatGM::BeginPlay()
 	Super::BeginPlay();
 	TArray<FUnitData> units{};
 	units.Add(FUnitData{3, 0, ECombatUnitType::PlayerUnit});
-	units.Add(FUnitData{5, 5, ECombatUnitType::EnemyUnit});
+	units.Add(FUnitData{11, 5, ECombatUnitType::EnemyUnit});
 	units.Add(FUnitData{12, 5, ECombatUnitType::EnemyUnit});
 	units.Add(FUnitData{12, 7, ECombatUnitType::EnemyUnit});
 	m_pPlayerController = GetWorld()->GetFirstPlayerController();
@@ -120,7 +120,7 @@ void ACombatGM::LoadInit(const TArray<FUnitData>& units)
 		{
 			if(j == 0 || i == 0 || j == AGrid::m_Grid[i].Num() - 1 || i >= AGrid::m_Grid.Num() - 1 ||
 				(i > 5 && j < 4) || (j >= AGrid::m_Grid[i].Num() - 2 && i < 7) || (i < 4 && j > AGrid::m_Grid[0].Num() - 5) || (j < 4 && i > 4) ||
-				(i > AGrid::m_Grid.Num() - 3 && j < 5)
+				(i > AGrid::m_Grid.Num() - 3 && j < 5) || (i == AGrid::m_Grid.Num() - 5 && j == AGrid::m_Grid[0].Num() - 5)
 				)
 			{
 				if(i == 3 && j == 0)
@@ -160,7 +160,7 @@ void ACombatGM::LoadInit(const TArray<FUnitData>& units)
 				auto enemyUnit = Cast<
 					AEnemyUnit>(GetWorld()->SpawnActor<AActor>(unitType, cell->GetActorLocation(), FRotator::ZeroRotator, spawnParams));
 				m_Units.Add(enemyUnit);
-				AddToInitiative(InitEntry{enemyUnit, FMath::RandRange(1, 8)});
+				AddToInitiative(InitEntry{enemyUnit, FMath::RandRange(1, 4)});
 				cell->m_CurrentUnit = enemyUnit;
 				enemyUnit->SetGridPosition(unit.m_Coords);
 

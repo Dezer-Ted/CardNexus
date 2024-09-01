@@ -50,7 +50,7 @@ void AGrid::PostInitializeComponents()
 		{
 			if(j == 0 || i == 0 || j == m_Grid[i].Num() - 1 || i >= m_Grid.Num() - 1 ||
 				(i > 5 && j < 4) || (j >= m_Grid[i].Num() - 2 && i < 7) || (i < 4 && j > m_Grid[0].Num() - 5) || (j < 4 && i > 4) ||
-				(i > m_Grid.Num() - 3 && j < 5)
+				(i > m_Grid.Num() - 3 && j < 5) || (i == m_Grid.Num() - 5 && j == m_Grid[0].Num() - 5)
 			)
 			{
 				if(i == 3 && j == 0)
