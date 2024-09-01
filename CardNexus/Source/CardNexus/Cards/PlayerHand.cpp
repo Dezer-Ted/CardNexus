@@ -58,7 +58,7 @@ void APlayerHand::ConstructHand()
 				m_HandCards[counter]->SetActorRelativeRotation(FRotator{0, 0, 0});
 				FVector splitOffSet{m_HandCards[counter]->GetActorLocation()};
 				FVector testValue{this->GetActorTransform().InverseTransformPosition(splitOffSet)};
-				testValue.X = counter * -10;
+				testValue.X = counter * -20;
 				m_HandCards[counter]->SetActorRelativeLocation(testValue);
 				counter++;
 				continue;
@@ -85,7 +85,7 @@ void APlayerHand::ConstructHand()
 		FVector splitOffSet{m_HandCards[counter]->GetActorLocation()};
 		FVector testValue{this->GetActorTransform().InverseTransformPosition(splitOffSet)};
 		testValue += FVector{0, 0, static_cast<double>(abs(FMath::Pow(i, 2.f))) * -10};
-		testValue.X = counter * -10;
+		testValue.X = counter * -20;
 		m_HandCards[counter]->SetActorRelativeLocation(testValue);
 		m_HandCards[counter]->SetActorRelativeRotation(FRotator{0, 0, 0});
 		m_HandCards[counter]->SetActorRelativeRotation(FRotator{0, 0, static_cast<double>(rotation)});
