@@ -46,6 +46,8 @@ public:
 
 	void ActivateEffect();
 	void DiscardThisCard();
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* m_pDemoCardMesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CardData")
 	TObjectPtr<UTextRenderComponent> m_pNameRenderer;
 
@@ -58,11 +60,16 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CardData")
 	TObjectPtr<UStaticMeshComponent> m_pImageMesh;
-	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AActor> m_PlayerHandBP{};
+	UPROPERTY()
 	APlayerHand* m_pHand{};
+	UPROPERTY()
 	ADeck* m_pDeck{};
-
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraSystem* m_pFlameBreath{};
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraSystem* m_pFireBolt{};
 	UPROPERTY()
 	UCardEffectLibrary* m_pCardEFfect;
 };

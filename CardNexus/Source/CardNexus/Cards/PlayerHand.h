@@ -11,11 +11,9 @@ class CARDNEXUS_API APlayerHand : public AActor {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
 	APlayerHand();
 
 protected:
-	// Called when the game starts or when spawned
 	const int32 m_CardWidth{225};
 	const int32 m_DistanceBetweenCards{-50};
 	const int32 m_RotationStep{5};
@@ -33,7 +31,6 @@ protected:
 	virtual void                      PostInitializeComponents() override;
 
 public:
-	// Called every frame
 	void         ConstructHand();
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION(BlueprintCallable)

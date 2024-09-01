@@ -14,7 +14,9 @@ ACard::ACard()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("root"));
+	m_pDemoCardMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Card"));
+	m_pDemoCardMesh->SetupAttachment(RootComponent);
 }
 
 void ACard::Initialize(const FName& cardName, ADeck* deck)
@@ -27,7 +29,7 @@ void ACard::Initialize(const FName& cardName, ADeck* deck)
 	static const FString contextString(TEXT("Card Table Context"));
 	m_pCardData = m_pItemDataTable->FindRow<FCardData>(cardName, contextString, true);
 	m_CardName = cardName;
-	m_pNameRenderer->SetText(FText::FromString(m_CardName.ToString()));
+	//m_pNameRenderer->SetText(FText::FromString(m_CardName.ToString()));
 	FString tagString{};
 	for(const auto& tag : m_pCardData->m_Tags)
 	{
@@ -44,11 +46,12 @@ void ACard::Initialize(const FName& cardName, ADeck* deck)
 	{
 		tagString += " | " + FString::FromInt(m_pCardData->m_Range) + "sq.";
 	}
-	m_pTagRenderer->SetText(FText::FromString(tagString));
+	/*m_pTagRenderer->SetText(FText::FromString(tagString));
 	m_pEffectRenderer->SetText(m_pCardData->m_EffectText);
-	m_pImageMesh->SetMaterial(0, m_pCardData->m_pImage);
+	m_pImageMesh->SetMaterial(0, m_pCardData->m_pImage);*/
 	m_pCardEFfect = NewObject<UCardEffectLibrary>(this, m_pCardData->m_Effect);
 	m_pCardEFfect->RegisterComponent();
+	m_pDemoCardMesh->SetMaterial(0, m_pCardData->m_pImage);
 	AddInstanceComponent(m_pCardEFfect);
 
 }

@@ -2,7 +2,8 @@
 
 
 #include "CardNexus/Cards/CardEffects/Firebreath.h"
-
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraSystem.h"
 #include "CardNexus/Cards/Card.h"
 #include "CardNexus/Cards/CardBase.h"
 #include "CardNexus/Combat/CombatPlayerController.h"
@@ -72,6 +73,24 @@ void UFirebreath::ResolveEffect(const FVector& pos)
 	EGridDirections    direction = DetermineDirection(pos);
 	auto               cardData = Cast<ACard>(GetOwner())->GetCardData();
 	TArray<AGridCell*> affectedCells = GetConeAffectedCells(playerCoord, cardData.m_Range, direction);
+	FRotator           rotator{};
+	switch(direction)
+	{
+	case EGridDirections::NORTH:
+		rotator = FRotator{0, 270, 90};
+		break;
+	case EGridDirections::SOUTH:
+		rotator = FRotator{0, 90, 90};
+		break;
+	case EGridDirections::EAST:
+		rotator = FRotator{0, 0, 90};
+		break;
+	case EGridDirections::WEST:
+		rotator = FRotator{0, 180, 90};
+		break;
+	}
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Cast<ACard>(GetOwner())->m_pFlameBreath, player->GetActorLocation(), rotator, FVector{1},
+	                                               true, true, ENCPoolMethod::None, true);
 	ApplyDamage(affectedCells, m_Damage);
 	Super::ResolveEffect(pos);
 }
