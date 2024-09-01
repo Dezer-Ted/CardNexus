@@ -5,6 +5,8 @@
 //#include "CardNexus/Combat/CombatGM.h"
 #include "CardNexus/Combat/CombatPlayerController.h"
 #include "CardNexus/Grid/Grid.h"
+#include "NiagaraFunctionLibrary.h"
+#include "CardNexus/Cards/Card.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
@@ -38,6 +40,10 @@ void UFirebolt::ResolveEffect(const FVector& pos)
 	auto            player{GetPlayer()};
 	EGridDirections direction = DetermineDirection(pos);
 	auto            target = GetProjectileTarget(direction, m_MaxTilesTravelled, player->GetGridPosition());
+
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Cast<ACard>(GetOwner())->m_pFireBolt, target->GetActorLocation(), FRotator{}, FVector{1},
+												   true, true, ENCPoolMethod::None, true);
+	
 	ApplyDamage({target}, m_Damage);
 	Super::ResolveEffect(pos);
 }
