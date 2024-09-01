@@ -10,6 +10,7 @@
 #include "CardNexus/Cards/PlayerHand.h"
 #include "CardNexus/Grid/EnemyUnit.h"
 #include "CardNexus/Grid/Grid.h"
+#include "CardNexus/Grid/InvisUnit.h"
 #include "CardNexus/Grid/PlayerUnit.h"
 #include "Components/TextBlock.h"
 #include "HUD/GameOverScreen.h"
@@ -97,9 +98,9 @@ void ACombatGM::BeginPlay()
 {
 	Super::BeginPlay();
 	TArray<FUnitData> units{};
-	units.Add(FUnitData{0, 0, ECombatUnitType::PlayerUnit});
+	units.Add(FUnitData{3, 0, ECombatUnitType::PlayerUnit});
 	units.Add(FUnitData{5, 5, ECombatUnitType::EnemyUnit});
-	units.Add(FUnitData{15, 5, ECombatUnitType::EnemyUnit});
+	units.Add(FUnitData{12, 5, ECombatUnitType::EnemyUnit});
 	units.Add(FUnitData{12, 7, ECombatUnitType::EnemyUnit});
 	m_pPlayerController = GetWorld()->GetFirstPlayerController();
 	FTimerHandle timerHandle;
@@ -111,11 +112,30 @@ void ACombatGM::BeginPlay()
 
 void ACombatGM::LoadInit(const TArray<FUnitData>& units)
 {
+
+	FActorSpawnParameters spawnParams{};
+	for(int i = 0; i < AGrid::m_Grid.Num(); ++i)
+	{
+		for(int j = 0; j < AGrid::m_Grid[i].Num(); ++j)
+		{
+			if(j == 0 || i == 0 || j == AGrid::m_Grid[i].Num() - 1 || i >= AGrid::m_Grid.Num() - 1 ||
+				(i > 5 && j < 4) || (j >= AGrid::m_Grid[i].Num() - 2 && i < 7)
+			)
+			{
+				if(i == 3 && j == 0)
+					continue;
+				CreateInvisUnitAtIndex(FCellCoord{i, j});
+			}
+		}
+	}
+	CreateInvisUnitAtIndex(FCellCoord{6, AGrid::m_Grid[0].Num() - 3});
+	CreateInvisUnitAtIndex(FCellCoord{6, AGrid::m_Grid[0].Num() - 8});
+	CreateInvisUnitAtIndex(FCellCoord{6, AGrid::m_Grid[0].Num() - 7});
+
 	for(const auto& unit : units)
 	{
-		auto                  cell{AGrid::GetCellAtIndex(unit.m_Coords)};
-		TSubclassOf<AActor>   unitType;
-		FActorSpawnParameters spawnParams{};
+		auto                cell{AGrid::GetCellAtIndex(unit.m_Coords)};
+		TSubclassOf<AActor> unitType;
 		switch(unit.m_Type)
 		{
 		case ECombatUnitType::PlayerUnit:
@@ -151,6 +171,16 @@ void ACombatGM::LoadInit(const TArray<FUnitData>& units)
 			}
 		}
 	}
+}
+
+void ACombatGM::CreateInvisUnitAtIndex(const FCellCoord& pos)
+{
+	FActorSpawnParameters spawnParams{};
+	auto cell = AGrid::GetCellAtIndex(pos);
+	auto invisUnit = Cast<AInvisUnit>(
+		GetWorld()->SpawnActor<AActor>(m_InvisUnitBP, cell->GetActorLocation(), FRotator::ZeroRotator, spawnParams));
+	m_Units.Add(invisUnit);
+	cell->m_CurrentUnit = invisUnit;
 }
 
 void ACombatGM::AddToInitiative(const InitEntry& entry)

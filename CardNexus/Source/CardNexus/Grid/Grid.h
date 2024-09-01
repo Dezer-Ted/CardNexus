@@ -42,9 +42,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32 m_GridWidth{8};
+	int32 m_GridWidth{12};
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int32                                      m_GridLength{20};
+	int32                                      m_GridLength{15};
 	const int32                                m_CellWidth{200};
 	static const int32                         m_MovementCost{5};
 	void                                       SetupNeighbors(AGridCell* pCell);

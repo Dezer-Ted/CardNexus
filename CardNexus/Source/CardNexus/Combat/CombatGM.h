@@ -48,7 +48,12 @@ private:
 	TSubclassOf<AActor> m_EnemyUnitBP;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> m_PlayerUnitBP;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> m_InvisUnitBP;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> m_EnvironmentUnitBP;
 	void                LoadInit(const TArray<FUnitData>& units);
+	void CreateInvisUnitAtIndex(const FCellCoord& pos);
 	GENERATED_BODY()
 	InitEntry* m_TurnUnit{nullptr};
 	UPROPERTY()

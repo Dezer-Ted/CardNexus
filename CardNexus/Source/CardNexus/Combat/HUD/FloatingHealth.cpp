@@ -6,6 +6,10 @@
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 
+void UFloatingHealth::HideWidget()
+{
+}
+
 void UFloatingHealth::SetHealth(int32 health, int32 maxHealth) const
 {
 	if(health <= 0 || maxHealth < 0)

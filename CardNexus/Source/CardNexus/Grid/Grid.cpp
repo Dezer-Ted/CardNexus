@@ -44,6 +44,24 @@ void AGrid::PostInitializeComponents()
 			SetupNeighbors(Cast<AGridCell>(m_Grid[i][j]->GetChildActor()));
 		}
 	}
+	for(int i = 0; i < m_Grid.Num(); ++i)
+	{
+		for(int j = 0; j < m_Grid[i].Num(); ++j)
+		{
+			if(j == 0 || i == 0 || j == m_Grid[i].Num() - 1 || i >= m_Grid.Num() - 1 ||
+				(i > 5 && j < 4) || (j >= m_Grid[i].Num() - 2 && i < 7)
+			)
+			{
+				if(i == 3 && j == 0)
+					continue;
+				m_Grid[i][j]->SetHiddenInGame(true);
+			}
+
+		}
+	}
+	m_Grid[6][m_Grid[0].Num() - 3]->SetHiddenInGame(true);
+	m_Grid[6][m_Grid[0].Num() - 8]->SetHiddenInGame(true);
+	m_Grid[6][m_Grid[0].Num() - 7]->SetHiddenInGame(true);
 }
 
 // Called every frame
@@ -179,7 +197,7 @@ TArray<AGridCell*> AGrid::FindPath(const FCellCoord& start, const FCellCoord& en
 		}
 		if(current->first == GetCellAtIndex(end))
 		{
- 			break;
+			break;
 		}
 		closedList.push_back(current);
 		openList.remove(current);

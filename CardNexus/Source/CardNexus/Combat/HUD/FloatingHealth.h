@@ -22,6 +22,6 @@ class CARDNEXUS_API UFloatingHealth : public UUserWidget
 	UTextBlock* m_pHPText;
 	
 public:
-	
+	void HideWidget();
 	void SetHealth(int32 health,int32 maxHealth) const;
 };

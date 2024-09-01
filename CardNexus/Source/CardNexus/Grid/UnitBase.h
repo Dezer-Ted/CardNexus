@@ -58,7 +58,7 @@ public:
 	ACombatGM* m_pCombatGM{nullptr};
 	UFUNCTION(BlueprintCallable)
 	int32 GetHitPoints() const;
-	void  AddHitPoints(int32 hpDelta);
+	virtual void  AddHitPoints(int32 hpDelta);
 	FName m_UnitName{};
 	int32 m_MovementSpeed{5};
 	int32 m_CurrentMovementSpeed{};

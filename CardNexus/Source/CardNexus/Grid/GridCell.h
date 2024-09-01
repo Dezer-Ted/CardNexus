@@ -60,11 +60,11 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* m_pCellMesh;
 	UPROPERTY(EditDefaultsOnly)
-	class UMaterial* m_pBaseMat{};
+	class UMaterialInterface* m_pBaseMat{};
 	UPROPERTY(EditDefaultsOnly)
-	class UMaterial* m_pHighlight{};
+	class UMaterialInterface* m_pHighlight{};
 	UPROPERTY(EditDefaultsOnly)
-	class UMaterial* m_pPathInRangeMat{};
+	class UMaterialInterface* m_pPathInRangeMat{};
 	UPROPERTY(EditDefaultsOnly)
-	class UMaterial* m_pPathOutOfRangeMat{};
+	class UMaterialInterface* m_pPathOutOfRangeMat{};
 };

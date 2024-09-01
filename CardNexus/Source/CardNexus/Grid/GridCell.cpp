@@ -2,6 +2,7 @@
 
 
 #include "CardNexus/Grid/GridCell.h"
+#include "Materials/MaterialInterface.h"
 
 // Sets default values
 AGridCell::AGridCell()
