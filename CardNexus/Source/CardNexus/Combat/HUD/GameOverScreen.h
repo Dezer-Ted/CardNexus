@@ -17,20 +17,20 @@ class CARDNEXUS_API UGameOverScreen : public UUserWidget
 	GENERATED_BODY()
 	virtual void NativeConstruct() override;
 public:
-	UPROPERTY(meta = (BindWidget))
-	UButton* m_pQuitButton;
-	UPROPERTY(meta = (BindWidget))
-	UButton* m_pPlayAgainButton;
+	//UPROPERTY(meta = (BindWidget))
+	//UButton* m_pQuitButton;
+	//UPROPERTY(meta = (BindWidget))
+	//UButton* m_pPlayAgainButton;
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* m_pGameOverOrWonText;
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* m_pPlayAgainText;
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* m_pQuitText;
+	//UPROPERTY(meta = (BindWidget))
+	//UTextBlock* m_pPlayAgainText;
+	//UPROPERTY(meta = (BindWidget))
+	//UTextBlock* m_pQuitText;
 
-	UFUNCTION()
-	void OnQuitClicked();
-	UFUNCTION()
-	void OnPlayAgainClicked();
+	//UFUNCTION()
+	//void OnQuitClicked();
+	//UFUNCTION()
+	//void OnPlayAgainClicked();
 	void gameWon(bool won);
 };
