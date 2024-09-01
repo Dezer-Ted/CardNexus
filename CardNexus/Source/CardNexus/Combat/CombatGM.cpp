@@ -119,8 +119,9 @@ void ACombatGM::LoadInit(const TArray<FUnitData>& units)
 		for(int j = 0; j < AGrid::m_Grid[i].Num(); ++j)
 		{
 			if(j == 0 || i == 0 || j == AGrid::m_Grid[i].Num() - 1 || i >= AGrid::m_Grid.Num() - 1 ||
-				(i > 5 && j < 4) || (j >= AGrid::m_Grid[i].Num() - 2 && i < 7)
-			)
+				(i > 5 && j < 4) || (j >= AGrid::m_Grid[i].Num() - 2 && i < 7) || (i < 4 && j > AGrid::m_Grid[0].Num() - 5) || (j < 4 && i > 4) ||
+				(i > AGrid::m_Grid.Num() - 3 && j < 5)
+				)
 			{
 				if(i == 3 && j == 0)
 					continue;
@@ -176,8 +177,8 @@ void ACombatGM::LoadInit(const TArray<FUnitData>& units)
 void ACombatGM::CreateInvisUnitAtIndex(const FCellCoord& pos)
 {
 	FActorSpawnParameters spawnParams{};
-	auto cell = AGrid::GetCellAtIndex(pos);
-	auto invisUnit = Cast<AInvisUnit>(
+	auto                  cell = AGrid::GetCellAtIndex(pos);
+	auto                  invisUnit = Cast<AInvisUnit>(
 		GetWorld()->SpawnActor<AActor>(m_InvisUnitBP, cell->GetActorLocation(), FRotator::ZeroRotator, spawnParams));
 	m_Units.Add(invisUnit);
 	cell->m_CurrentUnit = invisUnit;
