@@ -70,6 +70,8 @@ public:
 	class UNiagaraSystem* m_pFlameBreath{};
 	UPROPERTY(EditDefaultsOnly)
 	class UNiagaraSystem* m_pFireBolt{};
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraSystem* m_pThunderWave{};
 	UPROPERTY()
 	UCardEffectLibrary* m_pCardEFfect;
 };
