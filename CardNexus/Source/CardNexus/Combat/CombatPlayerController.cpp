@@ -192,6 +192,8 @@ void ACombatPlayerController::PostInitializeComponents()
 void ACombatPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
+	if(!m_pPlayer)
+		return;
 	if(!m_pPlayer->m_IsTurnPlayer)
 	{
 		DisablePathProjection();
