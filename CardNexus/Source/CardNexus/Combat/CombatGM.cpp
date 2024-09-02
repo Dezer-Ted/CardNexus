@@ -97,7 +97,6 @@ void ACombatGM::OnUnitDeath(AUnitBase* pUnit)
 void ACombatGM::BeginPlay()
 {
 	Super::BeginPlay();
-	TArray<FUnitData> units{};
 	units.Add(FUnitData{3, 0, ECombatUnitType::PlayerUnit});
 	units.Add(FUnitData{11, 5, ECombatUnitType::EnemyUnit});
 	units.Add(FUnitData{12, 5, ECombatUnitType::EnemyUnit});
@@ -105,12 +104,11 @@ void ACombatGM::BeginPlay()
 	m_pPlayerController = GetWorld()->GetFirstPlayerController();
 	FTimerHandle timerHandle;
 	GetWorldTimerManager().SetTimer(timerHandle, this, &ACombatGM::InitHand, 1.f, false);
+	GetWorldTimerManager().SetTimer(timerHandle, this, &ACombatGM::LoadInit, 1.f, false);
 
-	LoadInit(units);
-	StartInitiative();
 }
 
-void ACombatGM::LoadInit(const TArray<FUnitData>& units)
+void ACombatGM::LoadInit()
 {
 
 	FActorSpawnParameters spawnParams{};
@@ -121,7 +119,7 @@ void ACombatGM::LoadInit(const TArray<FUnitData>& units)
 			if(j == 0 || i == 0 || j == AGrid::m_Grid[i].Num() - 1 || i >= AGrid::m_Grid.Num() - 1 ||
 				(i > 5 && j < 4) || (j >= AGrid::m_Grid[i].Num() - 2 && i < 7) || (i < 4 && j > AGrid::m_Grid[0].Num() - 5) || (j < 4 && i > 4) ||
 				(i > AGrid::m_Grid.Num() - 3 && j < 5) || (i == AGrid::m_Grid.Num() - 5 && j == AGrid::m_Grid[0].Num() - 5)
-				)
+			)
 			{
 				if(i == 3 && j == 0)
 					continue;
@@ -172,13 +170,25 @@ void ACombatGM::LoadInit(const TArray<FUnitData>& units)
 			}
 		}
 	}
+	StartInitiative();
 }
 
 void ACombatGM::CreateInvisUnitAtIndex(const FCellCoord& pos)
 {
 	FActorSpawnParameters spawnParams{};
 	auto                  cell = AGrid::GetCellAtIndex(pos);
-	auto                  invisUnit = Cast<AInvisUnit>(
+	if(!cell)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cell is uninitialized "));
+
+	}
+	else
+	{
+
+		UE_LOG(LogTemp, Warning, TEXT("Cell exists "));
+	}
+
+	auto invisUnit = Cast<AInvisUnit>(
 		GetWorld()->SpawnActor<AActor>(m_InvisUnitBP, cell->GetActorLocation(), FRotator::ZeroRotator, spawnParams));
 	m_Units.Add(invisUnit);
 	cell->m_CurrentUnit = invisUnit;

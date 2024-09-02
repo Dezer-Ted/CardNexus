@@ -23,9 +23,6 @@ void APlayerHand::BeginPlay()
 {
 	Super::BeginPlay();
 	m_HandCards.Reserve(10);
-	TArray<AActor*> decks;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), deckType, decks);
-	m_pDeck = Cast<ADeck>(decks[0]);
 
 
 	//m_HandCards.Add(m_pDeck->DrawCard());
@@ -110,6 +107,11 @@ void APlayerHand::Tick(float DeltaTime)
 
 void APlayerHand::DrawCard()
 {
+
+	TArray<AActor*> decks;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), deckType, decks);
+	m_pDeck = Cast<ADeck>(decks[0]);
+	
 	if(m_HandCards.Num() >= m_MaxHandSize)
 		return;
 	auto card{m_pDeck->DrawCard()};

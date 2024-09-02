@@ -4,7 +4,6 @@
 #include "CardNexus/Cards/CardEffectLibrary.h"
 
 #include "Card.h"
-#include "InteractiveToolManager.h"
 #include "CardNexus/Grid/Grid.h"
 #include "CardNexus/Grid/PlayerUnit.h"
 #include "Kismet/GameplayStatics.h"
